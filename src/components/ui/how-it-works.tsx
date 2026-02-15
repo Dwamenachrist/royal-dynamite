@@ -1,36 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ShieldCheck, CreditCard, Truck } from "lucide-react";
+import { Search, MessageCircle, Building2, Handshake } from "lucide-react";
 
 const steps = [
     {
         number: "01",
         icon: Search,
-        title: "Browse & Choose",
+        title: "Explore Our Collection",
         description:
-            "Explore our curated inventory of premium vehicles, rental fleet, or freight services tailored to your needs.",
+            "Browse our handpicked premium vehicles, flexible rental plans, or nationwide freight solutions  all in one place.",
     },
     {
         number: "02",
-        icon: ShieldCheck,
-        title: "Get Pre-Qualified",
+        icon: MessageCircle,
+        title: "Connect With Our Team",
         description:
-            "A quick, secure verification process that builds trust and ensures a seamless experience for everyone.",
+            "Reach out via WhatsApp, phone, or our enquiry form. Our consultants guide you personally  no pressure, no rush.",
     },
     {
         number: "03",
-        icon: CreditCard,
-        title: "Confirm & Pay",
+        icon: Building2,
+        title: "Visit & Experience",
         description:
-            "Transparent pricing with no hidden fees. Choose your payment method and confirm with confidence.",
+            "Come to our Accra showroom for a test drive, finalise your rental details, or walk through your logistics plan face-to-face.",
     },
     {
         number: "04",
-        icon: Truck,
-        title: "Delivery & Support",
+        icon: Handshake,
+        title: "Ongoing Partnership",
         description:
-            "Tracked delivery to your doorstep with dedicated after-sales support. Your journey doesn't end at purchase.",
+            "From paperwork to aftercare, we handle it all. Comprehensive support and a relationship that lasts beyond the handshake.",
     },
 ];
 
@@ -52,15 +52,15 @@ export function HowItWorks() {
                 {/* Section Header */}
                 <div className="text-center mb-20">
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-rd-gold mb-3">
-                        The Process
+                        Your Journey
                     </p>
                     <h2 className="text-3xl font-serif font-bold sm:text-4xl text-white">
                         How It Works
                     </h2>
                     <div className="w-16 h-1 bg-rd-gold mx-auto mt-5 rounded-full" />
                     <p className="text-white/50 mt-6 max-w-lg mx-auto text-sm leading-relaxed">
-                        From first look to final delivery — a premium experience
-                        designed around trust, transparency, and your convenience.
+                        From first glance to lasting partnership  a premium experience
+                        built on trust, personal attention, and your convenience.
                     </p>
                 </div>
 
@@ -71,7 +71,7 @@ export function HowItWorks() {
                         {/* Base line (dim) */}
                         <div className="h-[2px] w-full rounded-full bg-white/[0.06]" />
 
-                        {/* Gold glow overlay — progressive fill based on hovered step */}
+                        {/* Gold glow overlay  progressive fill based on hovered step */}
                         <div
                             className="absolute top-0 left-0 h-[2px] rounded-full transition-all duration-700 ease-out"
                             style={{

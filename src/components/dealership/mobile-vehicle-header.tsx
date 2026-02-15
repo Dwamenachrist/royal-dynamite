@@ -1,6 +1,8 @@
 import React from "react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 import { MessageSquare } from "lucide-react"
+import { generateWhatsAppLink } from "@/lib/constants"
 
 interface MobileVehicleHeaderProps {
     vehicle: any
@@ -32,16 +34,28 @@ export function MobileVehicleHeader({ vehicle }: MobileVehicleHeaderProps) {
             {/* Action Buttons */}
             <div className="space-y-3">
                 <Button
+                    asChild
                     className="w-full bg-gradient-to-r from-[#edbc1d] to-yellow-500 text-black font-bold text-lg py-6 rounded shadow-lg shadow-yellow-500/20"
                 >
-                    ENQUIRE NOW
+                    <Link href={`/dealership/${vehicle.id}/enquire`}>
+                        ENQUIRE NOW
+                    </Link>
                 </Button>
                 <Button
+                    asChild
                     variant="outline"
                     className="w-full bg-white/5 text-white border-white/10 py-6 text-lg font-semibold"
                 >
-                    <MessageSquare className="w-5 h-5 mr-2 text-green-400" />
-                    WHATSAPP DIRECT
+                    <a
+                        href={generateWhatsAppLink(
+                            `Hi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.price ? ` listed at GH₵ ${vehicle.price.toLocaleString()}` : ''}. Please send me more details.`
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <MessageSquare className="w-5 h-5 mr-2 text-green-400" />
+                        WHATSAPP DIRECT
+                    </a>
                 </Button>
             </div>
         </div>

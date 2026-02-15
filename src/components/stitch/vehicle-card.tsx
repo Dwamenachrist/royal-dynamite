@@ -1,9 +1,6 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { Vehicle } from "@/types";
-import { generateWhatsAppLink } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface StitchVehicleCardProps {
@@ -17,11 +14,7 @@ export function StitchVehicleCard({ vehicle }: StitchVehicleCardProps) {
         ? `GH₵ ${vehicle.dailyRate?.toLocaleString()}`
         : `GH₵ ${vehicle.price?.toLocaleString()}`;
 
-    const buttonText = isRental ? "Book Now" : "Enquire Now";
-
-    const whatsappMessage = isRental
-        ? `Hello, I am interested in renting the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Is it available?`
-        : `Hello, I am interested in purchasing the ${vehicle.year} ${vehicle.make} ${vehicle.model} listed for ${priceDisplay}.`;
+    const buttonText = "View Details";
 
     // Status Badge Logic - Critical Visual Polish
     let badgeText = "";
@@ -80,14 +73,6 @@ export function StitchVehicleCard({ vehicle }: StitchVehicleCardProps) {
                 {/* Action Button */}
                 <div className="mt-auto">
                     <span
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.open(generateWhatsAppLink(whatsappMessage), "_blank");
-                        }}
-                        role="button"
-                        tabIndex={0}
-                        // Premium Metallic Button Styling
                         className="w-full relative overflow-hidden flex items-center justify-center py-4 rounded-xl bg-gradient-to-r from-[#D4AF37] via-[#F2D06B] to-[#D4AF37] bg-[length:200%_auto] text-[#0a192f] font-bold text-sm tracking-widest uppercase transition-all duration-500 hover:bg-[position:right_center] shadow-[0_4px_20px_rgba(212,175,55,0.2)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.4)] hover:-translate-y-0.5 cursor-pointer"
                     >
                         {buttonText}
