@@ -190,6 +190,9 @@ export default function ContactPage() {
                 title="Private Concierge"
                 description="Your exclusive gateway to premium service. Every inquiry receives dedicated, white-glove attention from our expert team."
                 breadcrumb="Contact"
+                heroImage="/images/concierge-hero.png"
+                heroImageAlt="Royal Dynamite concierge opening car door for client"
+                variant="full"
             />
 
             {/* ═══════ CONCIERGE SECTION ═══════ */}
@@ -252,7 +255,7 @@ export default function ContactPage() {
                                     </span>
                                     <p className="text-xs font-semibold text-green-400 tracking-wide">
                                         Concierge Desk: <span className="text-green-300">Online</span>
-                                        <span className="text-white/40 font-normal ml-2">Avg. Reply: 5 Mins</span>
+                                        <span className="text-white/40 font-normal ml-2">Avg. Reply: Under 2 Hrs</span>
                                     </p>
                                 </div>
 
