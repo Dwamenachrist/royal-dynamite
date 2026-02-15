@@ -1,0 +1,13 @@
+src/components/stitch/dealership-layout.tsx(14,8): error TS2307: Cannot find module '@/components/ui/pagination' or its corresponding type declarations.
+src/components/stitch/dealership-layout.tsx(60,17): error TS18047: 'v.price' is possibly 'null'.
+src/components/stitch/dealership-layout.tsx(60,52): error TS18047: 'v.price' is possibly 'null'.
+src/components/stitch/filter-sidebar.tsx(70,20): error TS2345: Argument of type '{ searchTerm: string; bodyStyle: string; priceRange: number[]; make: string; model: string; yearRange: number[]; }' is not assignable to parameter of type 'SetStateAction<StitchFilters>'.
+  Type '{ searchTerm: string; bodyStyle: string; priceRange: number[]; make: string; model: string; yearRange: number[]; }' is not assignable to type 'StitchFilters'.
+    Types of property 'priceRange' are incompatible.
+      Type 'number[]' is not assignable to type '[number, number]'.
+        Target requires 2 element(s) but source may have fewer.
+src/components/stitch/filter-sidebar.tsx(72,24): error TS2345: Argument of type '{ searchTerm: string; bodyStyle: string; priceRange: number[]; make: string; model: string; yearRange: number[]; }' is not assignable to parameter of type 'StitchFilters'.
+  Types of property 'priceRange' are incompatible.
+    Type 'number[]' is not assignable to type '[number, number]'.
+      Target requires 2 element(s) but source may have fewer.
+src/components/stitch/rentals-layout.tsx(20,9): error TS2353: Object literal may only specify known properties, and 'year' does not exist in type 'StitchFilters | (() => StitchFilters)'.
