@@ -2,7 +2,7 @@ import React from "react"
 import { Phone, MapPin } from "lucide-react"
 
 interface MobileVehicleFooterProps {
-    vehicle: any
+    vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export function MobileVehicleFooter({ vehicle }: MobileVehicleFooterProps) {

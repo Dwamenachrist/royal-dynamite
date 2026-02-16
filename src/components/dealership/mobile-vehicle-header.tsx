@@ -5,7 +5,7 @@ import { MessageSquare } from "lucide-react"
 import { generateWhatsAppLink } from "@/lib/constants"
 
 interface MobileVehicleHeaderProps {
-    vehicle: any
+    vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export function MobileVehicleHeader({ vehicle }: MobileVehicleHeaderProps) {

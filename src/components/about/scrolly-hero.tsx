@@ -111,7 +111,7 @@ export function ScrollyHero() {
     )
 }
 
-function GlassCard({ title, subtitle, image, icon: Icon }: { title: string, subtitle: string, image: string, icon: any }) {
+function GlassCard({ title, subtitle, image, icon: Icon }: { title: string, subtitle: string, image: string, icon: any }) { // eslint-disable-line @typescript-eslint/no-explicit-any
     return (
         <div className="w-[280px] h-[200px] relative rounded-xl overflow-hidden glass-panel border border-white/10 shadow-2xl group transition-all duration-500 hover:border-primary/50">
             <div className="absolute inset-0">

@@ -129,6 +129,7 @@ export default async function RentalVehicleDetailPage({ params }: PageProps) {
 }
 
 /* ─── Rental-specific Action Panel ─── */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsappMessage: string }) {
     return (
         <div className="w-full relative">

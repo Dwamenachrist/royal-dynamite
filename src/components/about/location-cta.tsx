@@ -23,7 +23,7 @@ export function LocationCTA() {
                 <div className="flex-1">
                     <h2 className="font-display text-4xl md:text-5xl text-white mb-8">OUR PRESENCE IN ACCRA</h2>
                     <p className="text-slate-400 text-lg mb-12 max-w-xl font-light">
-                        Located in the heart of Ghana's capital, our headquarters serves as the nexus of luxury mobility and global logistics operations. Visit us for a private consultation.
+                        Located in the heart of Ghana&apos;s capital, our headquarters serves as the nexus of luxury mobility and global logistics operations. Visit us for a private consultation.
                     </p>
                     <div className="space-y-6">
                         <ContactItem icon={MapPin} text="Airport Residential Area, Accra, Ghana" />
@@ -66,7 +66,7 @@ export function LocationCTA() {
     )
 }
 
-function ContactItem({ icon: Icon, text }: { icon: any, text: string }) {
+function ContactItem({ icon: Icon, text }: { icon: any, text: string }) { // eslint-disable-line @typescript-eslint/no-explicit-any
     return (
         <div className="flex items-center gap-4 text-white group cursor-pointer hover:text-primary transition-colors">
             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">

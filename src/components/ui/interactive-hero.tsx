@@ -179,7 +179,7 @@ export function InteractiveHero() {
                             className="flex items-center"
                         >
                             <p className="text-lg md:text-xl text-white/80 font-light leading-relaxed drop-shadow-lg">
-                                Bespoke automotive solutions for Ghana's most discerning clients. Where reliability meets executive status.
+                                Bespoke automotive solutions for Ghana&apos;s most discerning clients. Where reliability meets executive status.
                             </p>
                         </motion.div>
                     </div>

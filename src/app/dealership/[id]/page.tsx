@@ -12,8 +12,7 @@ import Link from "next/link"
 import { ChevronRight, Home } from "lucide-react"
 import { Metadata } from "next"
 
-// @ts-ignore - Ignoring params type for now to avoid complexity with next.js types in this environment
-export default async function VehicleDetailPage({ params }: { params: { id: string } }) {
+export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
     // In a real app we'd await params
     const id = (await params).id
     const vehicle = getVehicleById(id)

@@ -53,12 +53,14 @@ export function DualRangeSlider({
     useEffect(() => {
         // Update local state if props change (external reset)
         if (value[0] !== minValRef.current || value[1] !== maxValRef.current) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMinVal(value[0]);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaxVal(value[1]);
             minValRef.current = value[0];
             maxValRef.current = value[1];
         }
-    }, [value]);
+    }, [value[0], value[1]]);
 
     return (
         <div className={cn("relative w-full h-6 flex items-center", className)}>

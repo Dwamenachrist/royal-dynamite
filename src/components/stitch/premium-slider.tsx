@@ -58,12 +58,14 @@ export function PremiumSlider({
     // We use a flag or check to ensure we don't overwrite dragging state if parent updates unexpectedly
     useEffect(() => {
         if (value[0] !== minValRef.current || value[1] !== maxValRef.current) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMinVal(value[0]);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaxVal(value[1]);
             minValRef.current = value[0];
             maxValRef.current = value[1];
         }
-    }, [value]);
+    }, [value[0], value[1]]);
 
     const handleMinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const val = Math.min(Number(event.target.value), maxVal - step);

@@ -41,7 +41,7 @@ export function FirmIntro() {
                         </p>
                         <div className="p-6 glass-panel rounded-xl border-l-4 border-l-primary/60 bg-primary/5">
                             <p className="text-gray-300 italic font-light">
-                                "We have diligently served our cherished partners and customers through our prompt and quality delivery of services."
+                                &quot;We have diligently served our cherished partners and customers through our prompt and quality delivery of services.&quot;
                             </p>
                         </div>
                     </motion.div>
@@ -75,17 +75,13 @@ export function FirmIntro() {
                                     <span className="w-1.5 h-1.5 rounded-full bg-primary group-hover:scale-150 transition-transform duration-300"></span>
                                     <span className="text-xl text-white font-display">4. Transport Services</span>
                                 </li>
-                                <li className="flex items-center gap-4 group">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-primary group-hover:scale-150 transition-transform duration-300"></span>
-                                    <span className="text-xl text-white font-display">5. General Merchants</span>
-                                </li>
                             </ul>
                         </div>
 
                         <div className="pt-6 border-t border-white/5">
                             <h4 className="text-lg text-primary tracking-widest uppercase font-bold mb-4 text-gradient-gold">Human Resources</h4>
                             <p>
-                                Our human resources are a cream of young, agile, ardent, talented, and dynamic professionals from various walks of life. These professionals discharge their responsibilities with utmost zeal and determination to achieve optimum clients' satisfaction.
+                                Our human resources are a cream of young, agile, ardent, talented, and dynamic professionals from various walks of life. These professionals discharge their responsibilities with utmost zeal and determination to achieve optimum clients&apos; satisfaction.
                             </p>
                         </div>
                     </motion.div>

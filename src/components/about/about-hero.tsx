@@ -29,7 +29,7 @@ export function AboutHero() {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="text-primary text-sm md:text-base tracking-[0.3em] uppercase mb-4 font-semibold"
                 >
-                    Ghana's Premier Automotive Concierge
+                    Ghana&apos;s Premier Automotive Concierge
                 </motion.h2>
 
                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight tracking-tight mb-8">
@@ -57,7 +57,7 @@ export function AboutHero() {
                     transition={{ duration: 1, delay: 0.8 }}
                     className="max-w-2xl mx-auto text-gray-300 text-lg md:text-xl font-light leading-relaxed mb-12"
                 >
-                    Redefining the art of movement in West Africa. We don't just transport; we curate experiences of power, prestige, and unparalleled luxury.
+                    Redefining the art of movement in West Africa. We don&apos;t just transport; we curate experiences of power, prestige, and unparalleled luxury.
                 </motion.p>
 
                 <motion.div

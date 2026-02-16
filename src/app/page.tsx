@@ -182,7 +182,7 @@ export default function HomePage() {
                         </h2>
                         <div className="w-16 h-1 bg-rd-gold mx-auto mt-3 mb-6 rounded-full" />
                         <p className="text-white/60 text-lg mb-10">
-                            Whether you&apos;re buying, renting, shipping, or need transport — we&apos;re
+                            Whether you&apos;re buying, renting, shipping, or need transport we&apos;re
                             one message away.
                         </p>
 

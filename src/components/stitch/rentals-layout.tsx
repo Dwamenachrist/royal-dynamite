@@ -13,11 +13,12 @@ export function StitchRentalsLayout({
     initialVehicles,
 }: StitchRentalsLayoutProps) {
     const [filters, setFilters] = useState<StitchFilters>({
+        searchTerm: "",
         bodyStyle: "all",
-        priceRange: [0, 1500], // Higher range for some rentals or total cost? Daily rate usually < 1000
+        priceRange: [50, 2000],
         make: "Any Make",
         model: "Any Model",
-        year: "Any Year",
+        yearRange: [2018, 2024],
     });
 
     const filteredVehicles = useMemo(() => {

@@ -36,9 +36,13 @@ export function Navbar() {
     }, []);
 
     /* Close mobile menu on route change */
+    /* Close mobile menu on route change */
     useEffect(() => {
-        setIsOpen(false);
-    }, [pathname]);
+        if (isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setIsOpen(false);
+        }
+    }, [pathname, isOpen]);
 
     function isActive(href: string): boolean {
         if (href === "/") return pathname === "/";

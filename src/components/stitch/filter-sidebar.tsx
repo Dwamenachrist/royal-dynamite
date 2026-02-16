@@ -41,7 +41,7 @@ export function StitchFilterSidebar({
         isRental ? [50, 2000] : [20000, 800000]
     );
 
-    const handleFilterChange = (key: keyof StitchFilters, value: any) => {
+    const handleFilterChange = (key: keyof StitchFilters, value: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const newFilters = { ...filters, [key]: value };
         setFilters(newFilters);
         onFilterChange(newFilters);

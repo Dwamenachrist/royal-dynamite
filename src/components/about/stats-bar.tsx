@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { motion } from "framer-motion"
+import { motion, animate } from "framer-motion"
 
 export function StatsBar() {
     const containerVariants = {
@@ -44,26 +44,40 @@ export function StatsBar() {
 }
 
 function StatItem({ value, label }: { value: string, label: string }) {
-    const itemVariants = {
-        hidden: { opacity: 0, y: 50 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.8, ease: "easeOut" as const }
-        }
-    }
+    // Extract numeric part and suffix
+    const numericPart = parseInt(value.replace(/\D/g, '')) || 0
+    const suffix = value.replace(/[0-9]/g, '')
 
     return (
-        <motion.div
-            variants={itemVariants}
-            className="flex flex-col items-center md:items-start group"
-        >
-            <span className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary via-[#eecf6d] to-primary mb-2 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg">
-                {value}
-            </span>
+        <div className="flex flex-col items-center md:items-start group">
+            <div className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary via-[#eecf6d] to-primary mb-2 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg font-display">
+                <Counter from={0} to={numericPart} duration={2} />
+                <span>{suffix}</span>
+            </div>
             <span className="text-gray-400 uppercase tracking-widest text-xs font-semibold">
                 {label}
             </span>
-        </motion.div>
+        </div>
     )
+}
+
+function Counter({ from, to, duration }: { from: number, to: number, duration: number }) {
+    const nodeRef = React.useRef<HTMLSpanElement>(null)
+
+    React.useEffect(() => {
+        const node = nodeRef.current
+        if (!node) return
+
+        const controls = animate(from, to, {
+            duration,
+            onUpdate(value) {
+                node.textContent = value.toFixed(0)
+            },
+            ease: "easeOut"
+        })
+
+        return () => controls.stop()
+    }, [from, to, duration])
+
+    return <span ref={nodeRef} />
 }

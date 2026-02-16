@@ -17,7 +17,7 @@ const pillars = [
         icon: Star,
         title: "White-Glove Service",
         description:
-            "We handle everything — documentation, delivery, and aftercare.",
+            "We handle everything documentation, delivery, and aftercare.",
     },
     {
         icon: Handshake,
@@ -62,7 +62,7 @@ export function WhyUs() {
                     >
                         <Image
                             src="/handshake.png"
-                            alt="Royal Dynamite — trusted partnership since 2015"
+                            alt="Royal Dynamite trusted partnership since 2015"
                             fill
                             className="object-cover"
                             sizes="(max-width: 1024px) 100vw, 50vw"

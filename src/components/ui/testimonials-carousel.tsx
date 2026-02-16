@@ -45,7 +45,7 @@ export function TestimonialsCarousel() {
     const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
     const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
-    const onSelect = useCallback((emblaApi: any) => {
+    const onSelect = useCallback((emblaApi: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         setSelectedIndex(emblaApi.selectedScrollSnap());
         setPrevBtnDisabled(!emblaApi.canScrollPrev());
         setNextBtnDisabled(!emblaApi.canScrollNext());

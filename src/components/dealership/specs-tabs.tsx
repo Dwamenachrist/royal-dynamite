@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 
 interface SpecsTabsProps {
     className?: string
-    vehicle: any // Type this properly if possible, for now using any to move fast
+    vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export function SpecsTabs({ className, vehicle }: SpecsTabsProps) {

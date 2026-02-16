@@ -66,7 +66,7 @@ export function LeadershipGrid() {
     )
 }
 
-function GQCard({ member }: { member: any }) {
+function GQCard({ member }: { member: any }) { // eslint-disable-line @typescript-eslint/no-explicit-any
     const cardVariants = {
         hidden: { opacity: 0, y: 50 },
         visible: {

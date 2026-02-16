@@ -45,7 +45,7 @@ export function PhilosophySection() {
     )
 }
 
-function PhilosophyItem({ item, index }: { item: any, index: number }) {
+function PhilosophyItem({ item, index }: { item: any, index: number }) { // eslint-disable-line @typescript-eslint/no-explicit-any
     const ref = useRef(null)
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -73,11 +73,6 @@ function PhilosophyItem({ item, index }: { item: any, index: number }) {
                         className={`relative z-10 order-2 ${isRight ? 'lg:order-2 lg:text-right' : 'lg:order-1 text-left'}`}
                     >
                         <div className={`flex items-center gap-4 mb-8 ${isRight ? 'justify-end flex-row-reverse' : ''} relative`}>
-                            {/* Watermark Number - Moved behind and made clearly decorative */}
-                            <span className="text-[10rem] md:text-[14rem] font-bold text-white/[0.03] font-display absolute -top-32 md:-top-48 select-none pointer-events-none z-0 leading-none">
-                                {item.id}
-                            </span>
-
                             <span className="h-[2px] w-12 bg-primary relative z-10"></span>
                             <span className="text-primary tracking-widest text-sm uppercase font-bold relative z-10">{item.subtitle}</span>
                         </div>
@@ -104,6 +99,13 @@ function PhilosophyItem({ item, index }: { item: any, index: number }) {
                                 />
                                 <div className="absolute inset-0 bg-background-dark/0 group-hover:bg-transparent transition-colors duration-500"></div>
                             </motion.div>
+
+                            {/* Editorial Number Overlay */}
+                            <div className={`absolute bottom-0 p-6 z-20 ${isRight ? 'left-0' : 'right-0'}`}>
+                                <h3 className="text-9xl font-display font-bold text-white/10 leading-none select-none">
+                                    {item.id}
+                                </h3>
+                            </div>
 
                             {/* Decorative Corner */}
                             <div className={`absolute bottom-6 w-12 h-12 border-b-2 border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${isRight ? 'left-6 border-l-2' : 'right-6 border-r-2'}`}></div>

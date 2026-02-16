@@ -226,7 +226,7 @@ export default function EnquirePage() {
                                     {/* Vehicle Image */}
                                     <div className="relative aspect-[16/10] overflow-hidden">
                                         <img
-                                            src={vehicle.images?.[0] || vehicle.image}
+                                            src={vehicle.images?.[0] || "/placeholder.svg"}
                                             alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                                             className="w-full h-full object-cover"
                                         />
