@@ -7,6 +7,8 @@ import { StatsBar } from "@/components/about/stats-bar"
 import { LeadershipGrid } from "@/components/about/leadership-grid"
 import { CTASection } from "@/components/about/cta-section"
 
+import { MajorClients } from "@/components/about/major-clients"
+
 export default function AboutPage() {
     return (
         <main className="bg-background-dark min-h-screen">
@@ -22,6 +24,7 @@ export default function AboutPage() {
             <PhilosophySection />
             <StatsBar />
             <LeadershipGrid />
+            <MajorClients />
             <CTASection />
         </main>
     )

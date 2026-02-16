@@ -5,14 +5,16 @@ import { TrustBar } from "@/components/dealership/trust-bar"
 import { SpecsTabs } from "@/components/dealership/specs-tabs"
 import { MobileVehicleHeader } from "@/components/dealership/mobile-vehicle-header"
 import { MobileVehicleFooter } from "@/components/dealership/mobile-vehicle-footer"
-import { getVehicleById, getRentalVehicles } from "@/lib/mock-data"
+import { getVehicleById, getRentalVehicles, getReviewsByVehicleId } from "@/lib/mock-data"
 import { generateWhatsAppLink } from "@/lib/constants"
 import { StitchVehicleCard } from "@/components/stitch/vehicle-card"
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronRight, Home, MessageSquare, Phone, ShieldCheck, MapPin, CheckCircle2 } from "lucide-react"
+import { ChevronRight, Home, Phone, ShieldCheck, MapPin, CheckCircle2 } from "lucide-react"
+import { FaWhatsapp } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import type { Metadata } from "next"
+import { RentalReviews } from "@/components/rentals/rental-reviews"
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -28,9 +30,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 }
 
-export default async function RentalVehicleDetailPage({ params }: PageProps) {
+export default async function RentalDetailPage({ params }: PageProps) {
     const { id } = await params
     const vehicle = getVehicleById(id)
+    const reviews = getReviewsByVehicleId(id)
 
     if (!vehicle) {
         return notFound()
@@ -102,6 +105,17 @@ export default async function RentalVehicleDetailPage({ params }: PageProps) {
                         <div className="hidden lg:block w-full lg:w-[35%]">
                             <RentalActionPanel vehicle={vehicle} whatsappMessage={whatsappMessage} />
                         </div>
+                    </div>
+
+                    {/* REVIEWS SECTION — Full Width, below 2-column layout */}
+                    <div id="reviews" className="mt-16 pt-12 border-t border-white/10">
+                        <h2 className="text-2xl font-display font-bold text-white mb-8 flex items-center gap-3">
+                            Client Experiences
+                            <span className="text-sm font-sans font-normal text-gray-500 bg-white/5 px-2 py-1 rounded-md">
+                                {reviews.length} Verified
+                            </span>
+                        </h2>
+                        <RentalReviews reviews={reviews} />
                     </div>
 
                     {/* Similar Rentals */}
@@ -187,7 +201,7 @@ function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsap
                         </Button>
                         <Button
                             variant="outline"
-                            className="w-full bg-white/5 hover:bg-white/10 text-white border-white/10 py-6 text-lg font-semibold backdrop-blur"
+                            className="w-full bg-white/5 hover:bg-[#25D366] text-white hover:text-white border-white/10 hover:border-[#25D366] py-6 text-lg font-semibold backdrop-blur transition-all duration-300 group"
                             asChild
                         >
                             <a
@@ -195,7 +209,7 @@ function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsap
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <MessageSquare className="w-5 h-5 mr-2 text-green-400" />
+                                <FaWhatsapp className="w-5 h-5 mr-2 text-[#25D366] group-hover:text-white transition-colors" />
                                 WHATSAPP DIRECT
                             </a>
                         </Button>
@@ -245,7 +259,7 @@ function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsap
                         <div className="absolute inset-0 flex items-center justify-center">
                             <div className="bg-black/80 backdrop-blur px-4 py-2 rounded-full border border-white/10 flex items-center gap-2 shadow-xl z-10">
                                 <MapPin className="text-[#edbc1d] w-3 h-3" />
-                                <span className="text-xs font-bold text-white">East Legon, Accra</span>
+                                <span className="text-xs font-bold text-white">Adenta - Bulldog, Accra</span>
                             </div>
                         </div>
                     </div>

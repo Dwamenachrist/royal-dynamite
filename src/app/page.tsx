@@ -35,7 +35,7 @@ export default function HomePage() {
             {/* ════════════════════════════════════════════
                 SERVICES — Asymmetric Dark Glass Grid (Context 7)
             ════════════════════════════════════════════ */}
-            <section className="relative py-24" style={{ background: '#0F223D' }}>
+            <section className="relative py-16 md:py-24" style={{ background: '#0F223D' }}>
                 {/* Gold-to-navy gradient top — seamless flow from Stats section */}
                 <div className="absolute inset-x-0 top-0 h-16" style={{ background: 'linear-gradient(180deg, rgba(212, 175, 55, 0.5) 0%, #0F223D 100%)' }} />
 
@@ -170,7 +170,7 @@ export default function HomePage() {
             {/* ════════════════════════════════════════════
                 CTA — Final conversion
             ════════════════════════════════════════════ */}
-            <section className="py-20 overflow-hidden relative" style={{ background: 'linear-gradient(180deg, #0F223D 0%, #1a3a66 50%, #0F223D 100%)' }}>
+            <section className="py-16 md:py-20 overflow-hidden relative" style={{ background: 'linear-gradient(180deg, #0F223D 0%, #1a3a66 50%, #0F223D 100%)' }}>
                 {/* Subtle dot pattern */}
                 <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle,#D4AF37_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 

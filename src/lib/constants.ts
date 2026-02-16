@@ -4,13 +4,19 @@ export const SITE_CONFIG = {
     tagline: "Premium Vehicles. Trusted Service.",
     description:
         "Ghana's trusted destination for vehicle sales, rentals, transport services, and freight forwarding since 2015.",
-    address: "Airport Residential Area, Accra, Ghana",
+    address: "Adenta - Bulldog, Accra, Ghana",
     phone: "+233 30 274 5678",
     whatsapp: "+233244000000",
     email: "info@royaldynamite.com",
     businessHours: "Mon - Fri: 8:00 AM - 6:00 PM | Sat: 9:00 AM - 2:00 PM",
     yearEstablished: 2015,
-    partners: ["Yakman Group", "Kwarteng & Co Consult"],
+    partners: [
+        "Yakman Group of Companies",
+        "Kwarteng and Co Consult",
+        "Double C Enterprise",
+        "Askraf International Company Ltd",
+        "Agye Nyame Company",
+    ],
 };
 
 // Navigation Links

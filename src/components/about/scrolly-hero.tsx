@@ -13,42 +13,42 @@ export function ScrollyHero() {
     })
 
     // -- PHYSICS ENGINE: HEAVY GLASS --
-    // High stiffness + high damping = heavy, precise snap with micro-recoil
-    const physicsTransition = { type: "spring", stiffness: 300, damping: 40, mass: 1.2 }
+    // Tuned for responsiveness: lighter mass for quicker reaction
+    const physicsTransition = { type: "spring", stiffness: 250, damping: 30, mass: 1.0 }
 
     // -- PHASE 1 & 2: MAGNETIC PULL (0% -> 70%) --
     // Diamond Layout Targets with "Heavy" interpolation
 
     // Top: Dealership
-    const dealershipY = useTransform(scrollYProgress, [0.1, 0.6], ["-120vh", "-350px"])
+    const dealershipY = useTransform(scrollYProgress, [0, 0.5], ["-120vh", "-350px"])
     // Left: Transport
-    const transportX = useTransform(scrollYProgress, [0.1, 0.6], ["-120vw", "-450px"])
+    const transportX = useTransform(scrollYProgress, [0, 0.5], ["-120vw", "-450px"])
     // Right: Freight
-    const freightX = useTransform(scrollYProgress, [0.1, 0.6], ["120vw", "450px"])
+    const freightX = useTransform(scrollYProgress, [0, 0.5], ["120vw", "450px"])
     // Bottom: Rentals
-    const rentalsY = useTransform(scrollYProgress, [0.1, 0.6], ["120vh", "350px"])
+    const rentalsY = useTransform(scrollYProgress, [0, 0.5], ["120vh", "350px"])
 
     // Opacity
-    const cardsOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1])
+    const cardsOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1])
 
     // Rotation Snap (Micro-adjustments for heavy feel)
-    const rotateLeft = useTransform(scrollYProgress, [0.2, 0.6], [-10, 0])
-    const rotateRight = useTransform(scrollYProgress, [0.2, 0.6], [10, 0])
+    const rotateLeft = useTransform(scrollYProgress, [0.1, 0.5], [-10, 0])
+    const rotateRight = useTransform(scrollYProgress, [0.1, 0.5], [10, 0])
 
     // -- PHASE 3: THE SNAP (60% -> 70%) --
     // A tight, microscopic bounce to simulate heavy mass colliding
-    const emblemScale = useTransform(scrollYProgress, [0.6, 0.65, 0.75], [1, 1.15, 1])
-    const emblemGlow = useTransform(scrollYProgress, [0.6, 0.75], ["drop-shadow(0 0 0px var(--gold))", "drop-shadow(0 0 30px var(--gold))"])
+    const emblemScale = useTransform(scrollYProgress, [0.5, 0.55, 0.65], [1, 1.15, 1])
+    const emblemGlow = useTransform(scrollYProgress, [0.5, 0.65], ["drop-shadow(0 0 0px var(--gold))", "drop-shadow(0 0 30px var(--gold))"])
 
     // -- PHASE 4: CLEAN EXIT (80% -> 90%) --
     // CRITICAL FIX: Accelerate fade out to prevent collision with Firm Intro.
     // Move slightly UP (-20%) to "lift" off phase, but Opacity kills it before overlap.
-    const heroScale = useTransform(scrollYProgress, [0.8, 0.9], [1, 1.5]) // Capped scale (no more ghost debris)
-    const heroOpacity = useTransform(scrollYProgress, [0.8, 0.9], [1, 0]) // Gone by 0.9
-    const heroY = useTransform(scrollYProgress, [0.8, 0.9], ["0%", "-20%"]) // Lift off
+    const heroScale = useTransform(scrollYProgress, [0.75, 0.9], [1, 1.5]) // Capped scale (no more ghost debris)
+    const heroOpacity = useTransform(scrollYProgress, [0.75, 0.9], [1, 0]) // Gone by 0.9
+    const heroY = useTransform(scrollYProgress, [0.75, 0.9], ["0%", "-20%"]) // Lift off
 
     return (
-        <section ref={containerRef} className="relative h-[300vh] bg-background-dark hidden lg:block">
+        <section ref={containerRef} className="relative h-[250vh] bg-background-dark hidden lg:block">
             <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
 
                 {/* Global Scale/Opacity Wrapper for Exit */}

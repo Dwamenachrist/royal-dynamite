@@ -683,3 +683,84 @@ export function getApplicationsByVehicle(vehicleId: string): RentalApplication[]
 export function getQuotesByService(serviceType: "transport" | "freight"): QuoteRequest[] {
     return MOCK_QUOTES.filter((q) => q.serviceType === serviceType);
 }
+
+// ──────────────────────────────────────────────
+// MOCK REVIEWS
+// ──────────────────────────────────────────────
+
+import { Review } from "@/types";
+
+export const MOCK_REVIEWS: Review[] = [
+    // Reviews for Vehicle 3 (Camry 2021)
+    {
+        id: "rev-1",
+        vehicleId: "3",
+        author: "Sarah Jenkins",
+        rating: 5,
+        date: "2025-02-10",
+        content: "Absolutely reliable car for my business trip in Accra. Fuel economy was excellent and the AC worked perfectly in the heat. Highly recommend!",
+        verified: true,
+        role: "Business Traveler",
+        avatar: "https://i.pravatar.cc/150?u=sarah"
+    },
+    {
+        id: "rev-2",
+        vehicleId: "3",
+        author: "Emmanuel O.",
+        rating: 4,
+        date: "2025-01-28",
+        content: "Smooth ride, clean interior. Pickup process was a bit slow but the car itself was great.",
+        verified: true,
+        role: "Local Commuter"
+    },
+
+    // Reviews for Vehicle 7 (Prado 2023)
+    {
+        id: "rev-3",
+        vehicleId: "7",
+        author: "Chief Adebayor",
+        rating: 5,
+        date: "2025-02-15",
+        content: "A true executive experience. The Prado commands respect on the road. Chauffeur was very professional.",
+        verified: true,
+        role: "VIP Client"
+    },
+    {
+        id: "rev-4",
+        vehicleId: "7",
+        author: "James Wilson",
+        rating: 5,
+        date: "2025-02-01",
+        content: "Used this for a site visit in the Eastern Region. Handled the rough terrain effortlessly. Worth every cedi.",
+        verified: true,
+        role: "Project Manager"
+    },
+
+    // Reviews for Vehicle 8 (E-Class)
+    {
+        id: "rev-5",
+        vehicleId: "8",
+        author: "Patricia A.",
+        rating: 5,
+        date: "2025-02-14",
+        content: "Stunning vehicle. Only the best for my wedding guests. Thank you for the impeccable service.",
+        verified: true,
+        role: "Event Planner"
+    },
+
+    // Reviews for Vehicle 6 (Coaster Bus)
+    {
+        id: "rev-6",
+        vehicleId: "6",
+        author: "Rev. John Mensah",
+        rating: 4,
+        date: "2025-01-20",
+        content: "Comfortable seating for our church retreat. Driver was patient and safe.",
+        verified: true,
+        role: "Group Leader"
+    }
+];
+
+export function getReviewsByVehicleId(vehicleId: string): Review[] {
+    return MOCK_REVIEWS.filter(r => r.vehicleId === vehicleId);
+}

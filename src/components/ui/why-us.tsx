@@ -32,7 +32,7 @@ export function WhyUs() {
 
     return (
         <section
-            className="relative py-16 md:py-20 overflow-hidden"
+            className="relative py-12 md:py-20 overflow-hidden"
             style={{ background: "#132b4d" }}
         >
             <div className="services-texture absolute inset-0 pointer-events-none" />

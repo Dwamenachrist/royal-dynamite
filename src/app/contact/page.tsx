@@ -563,14 +563,14 @@ export default function ContactPage() {
                         >
                             {/* Map iframe */}
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.725035!2d-0.1870!3d5.6037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9a1e9c8e0b15%3A0x2ad4f2e4e3e8c1a0!2sAirport%20Residential%20Area%2C%20Accra!5e0!3m2!1sen!2sgh!4v1700000000000!5m2!1sen!2sgh"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15881.54736340478!2d-0.163333!3d5.716667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9ca81794025d%3A0x6b4c107e008479e0!2sAdenta%20Bulldog!5e0!3m2!1sen!2sgh!4v1715000000000!5m2!1sen!2sgh"
                                 width="100%"
                                 height="450"
                                 style={{ border: 0, display: "block" }}
                                 allowFullScreen
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
-                                title="Royal Dynamite Limited — Airport Residential Area, Accra"
+                                title="Royal Dynamite Limited — Adenta - Bulldog, Accra"
                             />
 
                             {/* Floating Location Pin */}
@@ -594,11 +594,11 @@ export default function ContactPage() {
                                 }}
                             >
                                 <div>
-                                    <h4 className="text-white font-bold mb-1">Airport Residential Area</h4>
+                                    <h4 className="text-white font-bold mb-1">Adenta - Bulldog</h4>
                                     <p className="text-slate-300 text-sm">Accra, Ghana</p>
                                 </div>
                                 <a
-                                    href="https://maps.google.com/?q=Airport+Residential+Area+Accra+Ghana"
+                                    href="https://maps.google.com/?q=Adenta+Bulldog+Accra+Ghana"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-white text-slate-900 px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-[#D4AF37] hover:text-white transition-all duration-300 shrink-0"
@@ -614,7 +614,7 @@ export default function ContactPage() {
                                 <h4 className="text-xs font-bold uppercase text-[#D4AF37] mb-3 tracking-wider">Physical Address</h4>
                                 <p className="text-sm leading-relaxed text-slate-400">
                                     Suite 402, Dynamite Towers<br />
-                                    Airport Residential Area<br />
+                                    Adenta - Bulldog<br />
                                     Accra, Ghana
                                 </p>
                             </div>

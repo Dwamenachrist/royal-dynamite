@@ -39,7 +39,7 @@ export function HowItWorks() {
 
     return (
         <section
-            className="relative py-24 overflow-hidden"
+            className="relative py-16 md:py-24 overflow-hidden"
             style={{ background: "#132b4d" }}
         >
             {/* Subtle dot pattern background */}

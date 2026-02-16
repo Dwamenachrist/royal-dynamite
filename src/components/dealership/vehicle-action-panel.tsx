@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
-import { Phone, MessageSquare, MapPin } from "lucide-react"
+import { Phone, MapPin } from "lucide-react"
+import { FaWhatsapp } from "react-icons/fa"
 import { generateWhatsAppLink } from "@/lib/constants"
 
 interface VehicleActionPanelProps {
@@ -61,7 +62,7 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
                         <Button
                             asChild
                             variant="outline"
-                            className="w-full bg-white/5 hover:bg-white/10 text-white border-white/10 py-6 text-lg font-semibold backdrop-blur"
+                            className="w-full bg-white/5 hover:bg-[#25D366] text-white hover:text-white border-white/10 hover:border-[#25D366] py-6 text-lg font-semibold backdrop-blur transition-all duration-300 group"
                         >
                             <a
                                 href={generateWhatsAppLink(
@@ -70,7 +71,7 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <MessageSquare className="w-5 h-5 mr-2 text-green-400" />
+                                <FaWhatsapp className="w-5 h-5 mr-2 text-[#25D366] group-hover:text-white transition-colors" />
                                 WHATSAPP DIRECT
                             </a>
                         </Button>
@@ -110,7 +111,7 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
                         <div className="absolute inset-0 flex items-center justify-center">
                             <div className="bg-black/80 backdrop-blur px-4 py-2 rounded-full border border-white/10 flex items-center gap-2 shadow-xl z-10">
                                 <MapPin className="text-[#edbc1d] w-3 h-3" />
-                                <span className="text-xs font-bold text-white">East Legon, Accra</span>
+                                <span className="text-xs font-bold text-white">Adenta - Bulldog, Accra</span>
                             </div>
                         </div>
                     </div>

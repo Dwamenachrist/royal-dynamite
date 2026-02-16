@@ -1,4 +1,3 @@
-import React from "react"
 import { notFound } from "next/navigation"
 import { VehicleActionPanel } from "@/components/dealership/vehicle-action-panel"
 import { VehicleGallery } from "@/components/dealership/vehicle-gallery"
@@ -7,15 +6,16 @@ import { SpecsTabs } from "@/components/dealership/specs-tabs"
 import { MobileVehicleHeader } from "@/components/dealership/mobile-vehicle-header"
 import { MobileVehicleFooter } from "@/components/dealership/mobile-vehicle-footer"
 import { SimilarCarsGrid } from "@/components/dealership/similar-cars-grid"
-import { getVehicleById, MOCK_VEHICLES } from "@/lib/mock-data"
+import { getVehicleById, MOCK_VEHICLES, getReviewsByVehicleId } from "@/lib/mock-data"
+import { RentalReviews } from "@/components/rentals/rental-reviews"
 import Link from "next/link"
 import { ChevronRight, Home } from "lucide-react"
-import { Metadata } from "next"
 
 export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
     // In a real app we'd await params
     const id = (await params).id
     const vehicle = getVehicleById(id)
+    const reviews = getReviewsByVehicleId(id)
 
     if (!vehicle) {
         return notFound()
@@ -74,6 +74,17 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                         <div className="hidden lg:block w-full lg:w-[35%]">
                             <VehicleActionPanel vehicle={vehicle} />
                         </div>
+                    </div>
+
+                    {/* REVIEWS SECTION — Full Width, below 2-column layout */}
+                    <div id="reviews" className="mt-16 pt-12 border-t border-white/10">
+                        <h2 className="text-2xl font-display font-bold text-white mb-8 flex items-center gap-3">
+                            Client Experiences
+                            <span className="text-sm font-sans font-normal text-gray-500 bg-white/5 px-2 py-1 rounded-md">
+                                {reviews.length} Verified
+                            </span>
+                        </h2>
+                        <RentalReviews reviews={reviews} />
                     </div>
 
                     {/* Recirculation: You May Also Like */}

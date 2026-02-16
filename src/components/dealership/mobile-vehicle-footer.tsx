@@ -39,7 +39,7 @@ export function MobileVehicleFooter({ vehicle }: MobileVehicleFooterProps) {
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="bg-black/80 backdrop-blur px-4 py-2 rounded-full border border-white/10 flex items-center gap-2 shadow-xl z-10">
                             <MapPin className="text-[#edbc1d] w-3 h-3" />
-                            <span className="text-xs font-bold text-white">East Legon, Accra</span>
+                            <span className="text-xs font-bold text-white">Adenta - Bulldog, Accra</span>
                         </div>
                     </div>
                 </div>

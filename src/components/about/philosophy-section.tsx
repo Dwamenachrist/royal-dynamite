@@ -3,14 +3,14 @@
 import React, { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Scale, Leaf, Lightbulb, ShieldCheck, HeartHandshake, Users, BookOpen, Clock } from "lucide-react"
 
 const philosophyConfig = [
     {
         id: "01",
         title: "Vision",
         subtitle: "Our Aspiration",
-        description: "To be a leader in the provision of Auto Dealership and Freight Forwarding in Ghana and strive for excellence in all dealings.",
+        description: "To be a leader in the provision of Auto Dealership, Freight Forwarding, V.I.P Car Rentals, and Transport Services in Ghana and strive for excellence in all dealings.",
         // Modern skyscraper/glass building looking up - symbolizes Aspiration/Height
         image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop",
         align: "left"
@@ -19,7 +19,7 @@ const philosophyConfig = [
         id: "02",
         title: "Mission",
         subtitle: "Our Purpose",
-        description: "To develop into a commercially viable Auto dealership and Freight Forwarding company by partnering other international companies to maximize our services with transparency, timeliness, and trust.",
+        description: "To develop into a commercially viable Auto Dealership, Freight Forwarding, V.I.P Car Rentals, and Transport Services company by partnering with other international companies to maximize our services with transparency, timeliness, and trust.",
         // Logistics/Freight container ship or high-end transport - symbolizes Service/Trade
         image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop",
         align: "right"
@@ -28,10 +28,20 @@ const philosophyConfig = [
         id: "03",
         title: "Core Values",
         subtitle: "Our Bedrock",
-        description: "The essence of who we are underpins our values: Ensuring fair and transparent practices, Encouraging environmentally friendly auto dealership, Fostering a climate that encourages staff innovation, and being Dependable - on time, every time.",
+        description: "The essence of who we are underpins our values. Royal Dynamite Limited espouses these core principles:",
         // Abstract gold/dark texture or handshake - symbolizes Trust/Integrity
         image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop",
-        align: "left"
+        align: "left",
+        values: [
+            { label: "Fairness & Transparency", icon: Scale },
+            { label: "Environmentally Friendly", icon: Leaf },
+            { label: "Innovation & Diligence", icon: Lightbulb },
+            { label: "Dependability", icon: Clock },
+            { label: "Ethical & Honest", icon: ShieldCheck },
+            { label: "Passion for Customers", icon: HeartHandshake },
+            { label: "Teamwork", icon: Users },
+            { label: "Continuous Learning", icon: BookOpen },
+        ]
     }
 ]
 
@@ -84,6 +94,20 @@ function PhilosophyItem({ item, index }: { item: any, index: number }) { // esli
                         <p className="text-gray-300 leading-relaxed text-lg mb-8 font-light relative z-10">
                             {item.description}
                         </p>
+
+                        {/* Core Values Grid */}
+                        {item.values && (
+                            <div className="grid grid-cols-2 gap-4 mt-8 relative z-10">
+                                {item.values.map((val: any, idx: number) => (
+                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-rd-gold/30 transition-all duration-300">
+                                        <div className="w-8 h-8 rounded-full bg-rd-gold/10 flex items-center justify-center shrink-0">
+                                            <val.icon className="w-4 h-4 text-rd-gold" />
+                                        </div>
+                                        <span className="text-sm text-gray-200 font-medium">{val.label}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </motion.div>
 
                     {/* Image Window */}

@@ -58,3 +58,16 @@ export interface QuoteRequest {
     status: "new" | "contacted" | "closed";
     createdAt: string;
 }
+
+// Review Types
+export interface Review {
+    id: string;
+    vehicleId: string;
+    author: string;
+    rating: number; // 1-5
+    date: string;
+    content: string;
+    verified?: boolean;
+    avatar?: string;
+    role?: string; // e.g. "Business Traveler", "Family Trip"
+}

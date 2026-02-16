@@ -122,7 +122,7 @@ export function InteractiveHero() {
             </div>
 
             {/* Content */}
-            <div className="relative z-20 container px-4 md:px-6 lg:px-12 pt-24 pb-48">
+            <div className="relative z-20 container px-4 md:px-6 lg:px-12 pt-20 pb-24 md:pt-24 md:pb-48">
                 <div className="max-w-3xl">
                     {/* Badge */}
                     <motion.div
@@ -189,7 +189,7 @@ export function InteractiveHero() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: isTypingComplete ? 1 : 0 }} // Wait for text to finish? Or just standard delay? Let's verify.
                         // User might want standard delay. Let's use a fixed delay to ensure they appear eventually.
-                        transition={{ duration: 0.6, delay: 2.5 }} // Approximate time for typing to finish
+                        transition={{ duration: 0.6, delay: 0.4 }} // Stagger shortly after text finishes
                         className="flex flex-col sm:flex-row gap-4"
                     >
                         <Button

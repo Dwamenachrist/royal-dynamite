@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { generateWhatsAppLink } from "@/lib/constants";
 
@@ -35,14 +35,10 @@ export function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    /* Close mobile menu on route change */
-    /* Close mobile menu on route change */
+    /* Close mobile menu when user navigates (pathname changes) */
     useEffect(() => {
-        if (isOpen) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setIsOpen(false);
-        }
-    }, [pathname, isOpen]);
+        setIsOpen(false);
+    }, [pathname]);
 
     function isActive(href: string): boolean {
         if (href === "/") return pathname === "/";
@@ -168,7 +164,8 @@ export function Navbar() {
                             <span className="sr-only">Menu</span>
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="right" className="bg-rd-navy border-l border-white/[0.06] text-white w-[300px] p-0">
+                    <SheetContent side="right" className="bg-rd-navy border-l border-white/[0.06] text-white w-[300px] p-0 z-[60]">
+                        <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
                         {/* Logo header */}
                         <div className="flex items-center gap-2.5 p-6 border-b border-white/[0.06]">
                             <div className="relative h-10 w-10">
