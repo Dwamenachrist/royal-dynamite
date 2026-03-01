@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Search, SlidersHorizontal, CarFront, Truck, Car } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
@@ -26,6 +26,8 @@ export function StitchFilterSidebar({
     className,
     isRental = false,
 }: StitchFilterSidebarProps) {
+    const [yearOption, setYearOption] = useState("all");
+
     // Main filter state (committed values)
     const [filters, setFilters] = useState<StitchFilters>({
         searchTerm: "",
@@ -58,17 +60,32 @@ export function StitchFilterSidebar({
         handleFilterChange("priceRange", val);
     };
 
+    const YEAR_RANGES: Record<string, [number, number]> = {
+        all: [2000, 2025],
+        "2020": [2020, 2025],
+        "2022": [2022, 2025],
+        "2024": [2024, 2025],
+    };
+
+    const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const val = e.target.value;
+        setYearOption(val);
+        handleFilterChange("yearRange", YEAR_RANGES[val] ?? [2000, 2025]);
+    };
+
     const handleReset = () => {
+        const defaultPrice: [number, number] = isRental ? [50, 2000] : [20000, 800000];
         const resetFilters: StitchFilters = {
             searchTerm: "",
             bodyStyle: "all",
-            priceRange: isRental ? [50, 2000] : [20000, 800000],
+            priceRange: defaultPrice,
             make: "Any Make",
             model: "Any Model",
-            yearRange: [2018, 2024],
+            yearRange: [2000, 2025],
         };
         setFilters(resetFilters);
-        setVisualPriceRange(isRental ? [50, 2000] : [20000, 800000]); // Reset visual too
+        setVisualPriceRange(defaultPrice);
+        setYearOption("all");
         onFilterChange(resetFilters);
     };
 
@@ -218,12 +235,14 @@ export function StitchFilterSidebar({
                             Year
                         </label>
                         <select
+                            value={yearOption}
+                            onChange={handleYearChange}
                             className="w-full bg-[#0a192f] border border-white/10 text-white rounded-xl px-4 py-3 text-sm appearance-none focus:border-rd-gold focus:outline-none transition-colors shadow-inner cursor-pointer"
                         >
-                            <option>2018 - 2025</option>
-                            <option>2020+</option>
-                            <option>2022+</option>
-                            <option>Brand New</option>
+                            <option value="all">All Years</option>
+                            <option value="2020">2020 and newer</option>
+                            <option value="2022">2022 and newer</option>
+                            <option value="2024">Brand New (2024+)</option>
                         </select>
                         <div className="absolute right-4 bottom-3.5 pointer-events-none text-slate-500 text-[10px]">▼</div>
                     </div>

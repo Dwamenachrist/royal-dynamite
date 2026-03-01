@@ -44,8 +44,8 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                             </li>
                             <li><ChevronRight className="w-4 h-4 mx-1" /></li>
                             <li>
-                                <Link href="/showroom" className="hover:text-[#edbc1d] transition-colors">
-                                    {vehicle.category.charAt(0).toUpperCase() + vehicle.category.slice(1)}
+                                <Link href="/dealership" className="hover:text-[#edbc1d] transition-colors">
+                                    Auto Dealership
                                 </Link>
                             </li>
                             <li><ChevronRight className="w-4 h-4 mx-1" /></li>

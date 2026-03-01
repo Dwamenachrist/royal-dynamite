@@ -9,10 +9,10 @@ interface StitchVehicleCardProps {
 
 export function StitchVehicleCard({ vehicle }: StitchVehicleCardProps) {
     const isRental = vehicle.status === "rent";
-    // Currency Localization: GH₵ with commas
+    // Sales prices are hidden — only rental daily rates are shown
     const priceDisplay = isRental
         ? `GH₵ ${vehicle.dailyRate?.toLocaleString()}`
-        : `GH₵ ${vehicle.price?.toLocaleString()}`;
+        : "Contact for Price";
 
     const buttonText = "View Details";
 
@@ -57,12 +57,17 @@ export function StitchVehicleCard({ vehicle }: StitchVehicleCardProps) {
             <div className="p-6 flex flex-col flex-grow relative">
                 <div className="mb-6">
                     <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">
-                        {isRental ? "Daily Rate" : "Price"}
+                        {isRental ? "Daily Rate" : "Enquire"}
                     </p>
-                    {/* HUGE GOLD PRICE */}
-                    <p className="text-3xl font-serif font-bold text-rd-gold tracking-tight">
-                        {priceDisplay}<span className="text-sm text-slate-500 font-sans font-normal">{isRental && "/day"}</span>
-                    </p>
+                    {isRental ? (
+                        <p className="text-3xl font-serif font-bold text-rd-gold tracking-tight">
+                            {priceDisplay}<span className="text-sm text-slate-500 font-sans font-normal">/day</span>
+                        </p>
+                    ) : (
+                        <p className="text-lg font-semibold text-white/70 italic tracking-wide">
+                            Contact for Price
+                        </p>
+                    )}
 
                     {/* Title */}
                     <h3 className="text-xl font-medium text-white group-hover:text-rd-gold transition-colors duration-300 mt-2">

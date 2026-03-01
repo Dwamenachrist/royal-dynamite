@@ -1,21 +1,26 @@
-import React from "react"
+"use client"
+
+import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronDown } from "lucide-react"
 
 export function TransportHero() {
+    const [isLoaded, setIsLoaded] = useState(false)
+
     return (
         <div className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
             {/* Background Image - Chauffeur opening door */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 bg-[#0a192f]">
                 <Image
                     src="/transport-hero.png"
                     alt="Chauffeur opening door of black luxury car at night"
                     fill
                     sizes="100vw"
-                    className="object-cover"
+                    className={`object-cover transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
                     priority
+                    onLoad={() => setIsLoaded(true)}
                 />
                 {/* Overlay with Global Tokens */}
                 <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/80 to-background-dark/40"></div>

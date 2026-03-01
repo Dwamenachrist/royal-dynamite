@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +25,7 @@ export function PageHeader({
   heroImageAlt,
   variant = "default",
 }: PageHeaderProps) {
-  // Determine efficient layout mode
+  const [isLoaded, setIsLoaded] = useState(false);
   const isFullHero = variant === "full" && heroImage;
   const isSplit = variant === "split" && heroImage;
 
@@ -34,14 +37,15 @@ export function PageHeader({
       {/* ─── FULL WIDTH HERO BACKGROUND ─── */}
       {isFullHero && (
         <>
-          <div className="absolute inset-y-0 right-0 w-full lg:w-[70%] z-0">
+          <div className="absolute inset-y-0 right-0 w-full lg:w-[70%] z-0 bg-rd-navy">
             <Image
               src={heroImage!}
               alt={heroImageAlt || title}
               fill
-              className="object-cover object-center" // Center within the right-aligned box
+              className={`object-cover object-center transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
               priority
               quality={90}
+              onLoad={() => setIsLoaded(true)}
             />
             {/* Inner Gradient to blend the left edge of the image into the page background */}
             <div className="absolute inset-0 bg-gradient-to-r from-rd-navy from-0% via-rd-navy/40 via-50% to-transparent" />
@@ -101,14 +105,15 @@ export function PageHeader({
                   border: "1px solid rgba(212,175,55,0.15)",
                 }}
               />
-              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-rd-navy">
                 <Image
                   src={heroImage!}
                   alt={heroImageAlt || title}
                   fill
-                  className="object-cover"
+                  className={`object-cover transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
                   priority
                   sizes="380px"
+                  onLoad={() => setIsLoaded(true)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-rd-navy/30" />
               </div>

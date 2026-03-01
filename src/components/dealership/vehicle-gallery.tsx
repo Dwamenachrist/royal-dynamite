@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { Maximize, Play, RotateCw } from "lucide-react"
@@ -12,16 +12,30 @@ interface VehicleGalleryProps {
 
 export function VehicleGallery({ images, className }: VehicleGalleryProps) {
     const [activeImage, setActiveImage] = useState(images[0])
+    const [isImageVisible, setIsImageVisible] = useState(false)
+
+    // Fade in on first load and when switching images
+    useEffect(() => {
+        setIsImageVisible(false)
+        const t = setTimeout(() => setIsImageVisible(true), 50)
+        return () => clearTimeout(t)
+    }, [activeImage])
+
+    function handleThumbnailClick(img: string) {
+        setIsImageVisible(false)
+        setTimeout(() => setActiveImage(img), 80)
+    }
 
     return (
         <div className={cn("space-y-4", className)}>
             {/* Main Image Stage */}
-            <div className="relative aspect-video w-full rounded-xl overflow-hidden group border border-white/5 shadow-2xl shadow-black/50">
+            <div className="relative aspect-video w-full rounded-xl overflow-hidden group border border-white/5 shadow-2xl shadow-black/50 bg-[#0d1b2e]">
                 <Image
                     src={activeImage}
                     alt="Vehicle main view"
                     fill
-                    className="object-cover transform transition-transform duration-700 group-hover:scale-105"
+                    className={`object-cover transform transition-all duration-500 group-hover:scale-105 ${isImageVisible ? "opacity-100" : "opacity-0"}`}
+                    priority
                 />
 
                 {/* Image Controls overlay */}
@@ -47,7 +61,7 @@ export function VehicleGallery({ images, className }: VehicleGalleryProps) {
                 {images.map((img, idx) => (
                     <button
                         key={idx}
-                        onClick={() => setActiveImage(img)}
+                        onClick={() => handleThumbnailClick(img)}
                         className={cn(
                             "flex-shrink-0 w-32 aspect-[16/10] rounded-lg overflow-hidden relative transition-all group",
                             activeImage === img ? "border-2 border-[#edbc1d]" : "border border-white/10 hover:border-white/40"

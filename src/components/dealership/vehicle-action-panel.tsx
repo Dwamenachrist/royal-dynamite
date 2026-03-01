@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Phone, MapPin } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
-import { generateWhatsAppLink } from "@/lib/constants"
+import { generateWhatsAppLink, SITE_CONFIG } from "@/lib/constants"
 
 interface VehicleActionPanelProps {
     vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -34,11 +34,20 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
 
                     {/* Price */}
                     <div className="mb-8 border-b border-white/10 pb-6">
-                        <span className="text-sm text-gray-400 font-medium block mb-1">Asking Price</span>
-                        <div className="text-4xl lg:text-5xl font-bold text-[#edbc1d] tracking-tight">
-                            {vehicle.price ? `GH₵ ${vehicle.price.toLocaleString()}` : `GH₵ ${vehicle.dailyRate}/day`}
+                        <span className="text-sm text-gray-400 font-medium block mb-1">
+                            {vehicle.status === 'sale' ? 'Pricing' : 'Daily Rate'}
+                        </span>
+                        <div className={vehicle.status === 'sale'
+                            ? "text-2xl font-semibold text-white/70 italic tracking-wide"
+                            : "text-4xl lg:text-5xl font-bold text-[#edbc1d] tracking-tight"
+                        }>
+                            {vehicle.status === 'sale'
+                                ? 'Contact for Price'
+                                : `GH₵ ${vehicle.dailyRate}/day`}
                         </div>
-                        <span className="text-xs text-gray-500 mt-2 block">*Price includes all import duties and taxes</span>
+                        {vehicle.status !== 'sale' && (
+                            <span className="text-xs text-gray-500 mt-2 block">*Comprehensive insurance included</span>
+                        )}
                     </div>
 
                     {/* Quick Specs Grid */}
@@ -66,7 +75,7 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
                         >
                             <a
                                 href={generateWhatsAppLink(
-                                    `Hi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.price ? ` listed at GH₵ ${vehicle.price.toLocaleString()}` : ''}. Please send me more details.`
+                                    `Hi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Please send me more details.`
                                 )}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -89,9 +98,9 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
                             <p className="text-sm font-bold text-white">Kwame Mensah</p>
                         </div>
                         <div className="ml-auto">
-                            <button className="text-[#edbc1d] hover:text-white transition-colors">
+                            <a href={`tel:${SITE_CONFIG.phone}`} className="text-[#edbc1d] hover:text-white transition-colors" aria-label="Call us">
                                 <Phone className="w-5 h-5" />
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>

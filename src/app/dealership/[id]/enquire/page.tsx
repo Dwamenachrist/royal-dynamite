@@ -65,11 +65,7 @@ export default function EnquirePage() {
         )
     }
 
-    const priceDisplay = vehicle.price
-        ? `GH₵ ${vehicle.price.toLocaleString()}`
-        : "Contact for Price"
-
-    const whatsappMessage = `Hi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.price ? ` listed at GH₵ ${vehicle.price.toLocaleString()}` : ""}. Please send me more details.`
+    const whatsappMessage = `Hi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Please send me more details.`
 
     function validate(): boolean {
         const newErrors: FormErrors = {}
@@ -105,8 +101,19 @@ export default function EnquirePage() {
 
         setIsSubmitting(true)
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        const waMessage = [
+            `🚗 Vehicle Enquiry — ${vehicle!.year} ${vehicle!.make} ${vehicle!.model}`,
+            "",
+            `Name: ${formData.fullName}`,
+            `Phone: ${formData.phone}`,
+            `Email: ${formData.email}`,
+            "",
+            "Message:",
+            formData.message,
+            "",
+            "— Sent from RoyalDynamite.com",
+        ].join("\n")
+        window.open(generateWhatsAppLink(waMessage), "_blank", "noopener,noreferrer")
 
         setIsSubmitting(false)
         setIsSubmitted(true)
@@ -248,9 +255,9 @@ export default function EnquirePage() {
 
                                         {/* Price */}
                                         <div className="pt-4 border-t border-white/10">
-                                            <span className="text-xs text-gray-400 block mb-1">Asking Price</span>
-                                            <div className="text-3xl font-bold text-[#edbc1d] tracking-tight">
-                                                {priceDisplay}
+                                            <span className="text-xs text-gray-400 block mb-1">Pricing</span>
+                                            <div className="text-xl font-semibold text-white/70 italic tracking-wide">
+                                                Contact for Price
                                             </div>
                                         </div>
 

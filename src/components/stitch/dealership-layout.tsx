@@ -13,14 +13,22 @@ interface StitchDealershipLayoutProps {
 export function StitchDealershipLayout({
     initialVehicles,
 }: StitchDealershipLayoutProps) {
+    const ITEMS_PER_PAGE = 9;
+    const [currentPage, setCurrentPage] = useState(1);
+
     const [filters, setFilters] = useState<StitchFilters>({
         searchTerm: "",
         bodyStyle: "all",
         priceRange: [0, 500000],
         make: "Any Make",
         model: "Any Model",
-        yearRange: [2018, 2024],
+        yearRange: [2000, 2025],
     });
+
+    const handleFiltersChange = (newFilters: StitchFilters) => {
+        setFilters(newFilters);
+        setCurrentPage(1);
+    };
 
     // Filter Logic
     const filteredVehicles = useMemo(() => {
@@ -52,22 +60,23 @@ export function StitchDealershipLayout({
             // 4. Price Range
             if ((v.price ?? 0) < filters.priceRange[0] || (v.price ?? 0) > filters.priceRange[1]) return false;
 
-            // 5. Year Range (Mock logic as sidebar only has fixed ranges or simple select)
-            // The sidebar currently has a simple select for Year, but state has yearRange [number, number]
-            // We'll trust the sidebar to set yearRange correctly if it was implemented fully.
-            // However, the current sidebar implementation simply has a select that doesn't update the yearRange state yet.
-            // We will leave this placeholder or implement if the sidebar was fully updated to send ranges.
-            // Looking at sidebar code, it sends "yearRange" but the UI is a select.
-            // For now, we will just filter by Price as that was the critical request.
+            // 5. Year Range
+            if (v.year < filters.yearRange[0] || v.year > filters.yearRange[1]) return false;
 
             return true;
         });
     }, [initialVehicles, filters]);
 
+    const totalPages = Math.ceil(filteredVehicles.length / ITEMS_PER_PAGE);
+    const pagedVehicles = filteredVehicles.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
     return (
         <div className="flex flex-col lg:flex-row gap-8 relative z-10">
             {/* Sidebar */}
-            <StitchFilterSidebar onFilterChange={setFilters} />
+            <StitchFilterSidebar onFilterChange={handleFiltersChange} />
 
             {/* Grid Content */}
             <div className="flex-grow">
@@ -83,9 +92,9 @@ export function StitchDealershipLayout({
                         <span className="text-xs text-slate-500 uppercase tracking-widest font-bold">Sort by:</span>
                         <div className="relative group">
                             <select className="bg-[#112240] text-white text-sm font-medium border border-white/10 rounded-lg px-4 py-2 pr-8 outline-none cursor-pointer appearance-none focus:border-rd-gold transition-colors">
-                                <option>Price: Low to High</option>
-                                <option>Price: High to Low</option>
                                 <option>Newest Arrivals</option>
+                                <option>Lowest Mileage</option>
+                                <option>A–Z Make</option>
                             </select>
                             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">▼</div>
                         </div>
@@ -94,25 +103,32 @@ export function StitchDealershipLayout({
 
                 {/* Vehicle Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                    {filteredVehicles.map((vehicle) => (
+                    {pagedVehicles.map((vehicle) => (
                         <StitchVehicleCard key={vehicle.id} vehicle={vehicle} />
                     ))}
+                    {pagedVehicles.length === 0 && (
+                        <div className="col-span-3 py-24 text-center text-slate-500">
+                            No vehicles match your filters.
+                        </div>
+                    )}
                 </div>
 
-                {/* Pagination */}
-                <div className="mt-16 flex justify-center">
-                    {/* Pagination Component Placeholder */}
-                    <div className="flex gap-2">
-                        {[1, 2, 3].map(page => (
-                            <button
-                                key={page}
-                                className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${page === 1 ? 'bg-rd-gold text-[#0a192f]' : 'bg-[#112240] text-slate-400 hover:text-white hover:bg-white/5'}`}
-                            >
-                                {page}
-                            </button>
-                        ))}
+                {/* Pagination — only shown when there are multiple pages */}
+                {totalPages > 1 && (
+                    <div className="mt-16 flex justify-center">
+                        <div className="flex gap-2">
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${page === currentPage ? 'bg-rd-gold text-[#0a192f]' : 'bg-[#112240] text-slate-400 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );

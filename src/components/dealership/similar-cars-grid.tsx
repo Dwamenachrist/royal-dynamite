@@ -14,7 +14,7 @@ export function SimilarCarsGrid({ vehicles }: SimilarCarsGridProps) {
         <div className="mt-24 border-t border-white/5 pt-12">
             <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold text-white uppercase tracking-wide">You May Also Like</h2>
-                <Link href="/showroom" className="text-[#edbc1d] hover:text-white text-sm font-medium flex items-center gap-1 transition-colors">
+                <Link href="/dealership" className="text-[#edbc1d] hover:text-white text-sm font-medium flex items-center gap-1 transition-colors">
                     View Inventory <span>→</span>
                 </Link>
             </div>

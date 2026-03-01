@@ -1,22 +1,27 @@
-import React from "react"
+"use client"
+
+import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronDown } from "lucide-react"
 
 export function FreightHero() {
+    const [isLoaded, setIsLoaded] = useState(false)
+
     return (
         <div className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
             {/* Background Image - Container Ship/Port at Night */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 bg-[#0a192f]">
                 <div className="relative w-full h-full animate-slow-zoom">
                     <Image
                         src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop"
                         alt="Container ship at night with crane operations"
                         fill
                         sizes="100vw"
-                        className="object-cover"
+                        className={`object-cover transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
                         priority
+                        onLoad={() => setIsLoaded(true)}
                     />
                 </div>
                 {/* Overlay with Global Tokens */}

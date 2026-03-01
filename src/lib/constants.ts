@@ -5,9 +5,10 @@ export const SITE_CONFIG = {
     description:
         "Ghana's trusted destination for vehicle sales, rentals, transport services, and freight forwarding since 2015.",
     address: "Adenta - Bulldog, Accra, Ghana",
-    phone: "+233 30 274 5678",
-    whatsapp: "+233244000000",
-    email: "info@royaldynamite.com",
+    phone: "+233 24 056 6708",
+    phoneUAE: "+971 52 856 6255",
+    whatsapp: "+233240566708",
+    email: "dynamiteroyal43@gmail.com",
     businessHours: "Mon - Fri: 8:00 AM - 6:00 PM | Sat: 9:00 AM - 2:00 PM",
     yearEstablished: 2015,
     partners: [

@@ -1,5 +1,6 @@
 import React from "react"
 import { Phone, MapPin } from "lucide-react"
+import { SITE_CONFIG } from "@/lib/constants"
 
 interface MobileVehicleFooterProps {
     vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -18,9 +19,9 @@ export function MobileVehicleFooter({ vehicle }: MobileVehicleFooterProps) {
                     <p className="text-sm font-bold text-white">Kwame Mensah</p>
                 </div>
                 <div className="ml-auto">
-                    <button className="text-[#edbc1d] hover:text-white transition-colors p-2 bg-white/5 rounded-full">
+                    <a href={`tel:${SITE_CONFIG.phone}`} aria-label="Call us" className="text-[#edbc1d] hover:text-white transition-colors p-2 bg-white/5 rounded-full flex items-center justify-center">
                         <Phone className="w-5 h-5" />
-                    </button>
+                    </a>
                 </div>
             </div>
 

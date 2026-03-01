@@ -6,7 +6,7 @@ import { SpecsTabs } from "@/components/dealership/specs-tabs"
 import { MobileVehicleHeader } from "@/components/dealership/mobile-vehicle-header"
 import { MobileVehicleFooter } from "@/components/dealership/mobile-vehicle-footer"
 import { getVehicleById, getRentalVehicles, getReviewsByVehicleId } from "@/lib/mock-data"
-import { generateWhatsAppLink } from "@/lib/constants"
+import { generateWhatsAppLink, SITE_CONFIG } from "@/lib/constants"
 import { StitchVehicleCard } from "@/components/stitch/vehicle-card"
 import Link from "next/link"
 import Image from "next/image"
@@ -49,11 +49,6 @@ export default async function RentalDetailPage({ params }: PageProps) {
     const finalSimilar = similarVehicles.length >= 3
         ? similarVehicles
         : [...similarVehicles, ...allRentals.filter(v => v.id !== vehicle.id && !similarVehicles.find(s => s.id === v.id)).slice(0, 3 - similarVehicles.length)]
-
-    const isRental = vehicle.status === "rent"
-    const priceDisplay = isRental
-        ? `GH₵ ${vehicle.dailyRate?.toLocaleString()}`
-        : `GH₵ ${vehicle.price?.toLocaleString()}`
 
     const whatsappMessage = `Hello, I am interested in renting the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Is it available?`
 
@@ -195,7 +190,7 @@ function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsap
                             className="w-full bg-gradient-to-r from-[#edbc1d] to-yellow-500 hover:from-yellow-400 hover:to-yellow-500 text-black font-bold text-lg py-6 rounded shadow-lg shadow-yellow-500/20 transition-all transform hover:-translate-y-0.5"
                             asChild
                         >
-                            <Link href="/rentals/apply">
+                            <Link href={`/rentals/apply?vehicle=${encodeURIComponent(`${vehicle.year} ${vehicle.make} ${vehicle.model}`)}`}>
                                 APPLY TO RENT
                             </Link>
                         </Button>
@@ -239,9 +234,9 @@ function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsap
                             <p className="text-sm font-bold text-white">Ama Serwaa</p>
                         </div>
                         <div className="ml-auto">
-                            <button className="text-[#edbc1d] hover:text-white transition-colors">
+                            <a href={`tel:${SITE_CONFIG.phone}`} className="text-[#edbc1d] hover:text-white transition-colors" aria-label="Call us">
                                 <Phone className="w-5 h-5" />
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>

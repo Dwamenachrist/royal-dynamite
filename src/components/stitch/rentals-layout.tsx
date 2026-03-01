@@ -12,14 +12,22 @@ interface StitchRentalsLayoutProps {
 export function StitchRentalsLayout({
     initialVehicles,
 }: StitchRentalsLayoutProps) {
+    const ITEMS_PER_PAGE = 9;
+    const [currentPage, setCurrentPage] = useState(1);
+
     const [filters, setFilters] = useState<StitchFilters>({
         searchTerm: "",
         bodyStyle: "all",
         priceRange: [50, 2000],
         make: "Any Make",
         model: "Any Model",
-        yearRange: [2018, 2024],
+        yearRange: [2000, 2025],
     });
+
+    const handleFiltersChange = (newFilters: StitchFilters) => {
+        setFilters(newFilters);
+        setCurrentPage(1);
+    };
 
     const filteredVehicles = useMemo(() => {
         return initialVehicles.filter((v) => {
@@ -46,12 +54,18 @@ export function StitchRentalsLayout({
         });
     }, [initialVehicles, filters]);
 
+    const totalPages = Math.ceil(filteredVehicles.length / ITEMS_PER_PAGE);
+    const pagedVehicles = filteredVehicles.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
     return (
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar with Rental Mode */}
             <StitchFilterSidebar
                 className="w-full lg:w-80 flex-shrink-0"
-                onFilterChange={setFilters}
+                onFilterChange={handleFiltersChange}
                 isRental={true}
             />
 
@@ -79,28 +93,32 @@ export function StitchRentalsLayout({
 
                 {/* Vehicles Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredVehicles.map((vehicle) => (
+                    {pagedVehicles.map((vehicle) => (
                         <StitchVehicleCard key={vehicle.id} vehicle={vehicle} />
                     ))}
+                    {pagedVehicles.length === 0 && (
+                        <div className="col-span-3 py-24 text-center text-slate-500">
+                            No vehicles match your filters.
+                        </div>
+                    )}
                 </div>
 
-                {/* Pagination */}
-                <div className="flex justify-center mt-16">
-                    <div className="flex items-center gap-2">
-                        <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-rd-gold hover:bg-rd-gold/10 transition-all">
-                            <span className="material-icons text-sm">chevron_left</span>
-                        </button>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-rd-gold text-black font-bold">
-                            1
-                        </button>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-rd-gold hover:bg-rd-gold/10 transition-all">
-                            2
-                        </button>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-rd-gold hover:bg-rd-gold/10 transition-all">
-                            <span className="material-icons text-sm">chevron_right</span>
-                        </button>
+                {/* Pagination — only shown when there are multiple pages */}
+                {totalPages > 1 && (
+                    <div className="flex justify-center mt-16">
+                        <div className="flex items-center gap-2">
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold transition-all ${page === currentPage ? 'bg-rd-gold text-[#0a192f]' : 'border border-white/10 text-slate-400 hover:text-white hover:border-rd-gold hover:bg-rd-gold/10'}`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );

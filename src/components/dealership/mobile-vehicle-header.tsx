@@ -25,10 +25,17 @@ export function MobileVehicleHeader({ vehicle }: MobileVehicleHeaderProps) {
 
             {/* Price */}
             <div className="border-b border-white/10 pb-6">
-                <div className="text-4xl font-bold text-[#edbc1d] tracking-tight">
-                    {vehicle.price ? `GH₵ ${vehicle.price.toLocaleString()}` : `GH₵ ${vehicle.dailyRate}/day`}
+                <div className={vehicle.status === 'sale'
+                    ? "text-xl font-semibold text-white/70 italic tracking-wide"
+                    : "text-4xl font-bold text-[#edbc1d] tracking-tight"
+                }>
+                    {vehicle.status === 'sale'
+                        ? 'Contact for Price'
+                        : `GH₵ ${vehicle.dailyRate}/day`}
                 </div>
-                <span className="text-xs text-gray-500 mt-2 block">*Price includes all import duties and taxes</span>
+                {vehicle.status !== 'sale' && (
+                    <span className="text-xs text-gray-500 mt-2 block">*Comprehensive insurance included</span>
+                )}
             </div>
 
             {/* Action Buttons */}
@@ -48,7 +55,7 @@ export function MobileVehicleHeader({ vehicle }: MobileVehicleHeaderProps) {
                 >
                     <a
                         href={generateWhatsAppLink(
-                            `Hi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.price ? ` listed at GH₵ ${vehicle.price.toLocaleString()}` : ''}. Please send me more details.`
+                            `Hi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Please send me more details.`
                         )}
                         target="_blank"
                         rel="noopener noreferrer"

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
     ArrowLeft,
@@ -18,21 +18,76 @@ import {
     ChevronRight,
     Home,
     Shield,
+    Upload,
+    X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateWhatsAppLink, SITE_CONFIG } from "@/lib/constants";
 
-export default function RentalApplicationPage() {
-    const router = useRouter();
+function RentalApplicationForm() {
+    const searchParams = useSearchParams();
+    const preselectedVehicle = searchParams.get("vehicle") || "";
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [idImageFile, setIdImageFile] = useState<File | null>(null);
+    const [idImagePreview, setIdImagePreview] = useState<string | null>(null);
+
+    function handleIdImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setIdImageFile(file);
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (ev) => setIdImagePreview(ev.target?.result as string);
+            reader.readAsDataURL(file);
+        } else {
+            setIdImagePreview(null);
+        }
+    }
+
+    function clearIdImage() {
+        setIdImageFile(null);
+        setIdImagePreview(null);
+        const input = document.getElementById("idImage") as HTMLInputElement;
+        if (input) input.value = "";
+    }
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const data = new FormData(e.currentTarget);
+        const firstName = data.get("firstName") as string;
+        const lastName = data.get("lastName") as string;
+        const phone = data.get("phone") as string;
+        const email = data.get("email") as string;
+        const idType = data.get("idType") as string;
+        const startDate = data.get("startDate") as string;
+        const endDate = data.get("endDate") as string;
+        const vehiclePreference = (data.get("vehiclePreference") as string) || "Any Available";
+
+        const idLine = idImageFile
+            ? `ID Type: ${idType} — photo "${idImageFile.name}" (will send via WhatsApp)`
+            : `ID Type: ${idType} — photo not yet uploaded`;
+
+        const waMessage = [
+            "📋 Rental Application",
+            "",
+            `Name: ${firstName} ${lastName}`,
+            `Phone: ${phone}`,
+            `Email: ${email}`,
+            "",
+            idLine,
+            "",
+            `Vehicle: ${vehiclePreference}`,
+            `Pickup Date: ${startDate}`,
+            `Return Date: ${endDate}`,
+            "",
+            "— Sent from RoyalDynamite.com",
+        ].join("\n");
+
+        window.open(generateWhatsAppLink(waMessage), "_blank", "noopener,noreferrer");
 
         setIsSubmitting(false);
         setIsSubmitted(true);
@@ -52,7 +107,6 @@ export default function RentalApplicationPage() {
                 <main className="pt-24 pb-12 relative">
                     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         <div className="bg-[#112240]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 sm:p-12 text-center space-y-6">
-                            {/* Success Icon */}
                             <div className="w-20 h-20 mx-auto rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center">
                                 <CheckCircle2 className="w-10 h-10 text-green-400" />
                             </div>
@@ -68,7 +122,17 @@ export default function RentalApplicationPage() {
                                 </p>
                             </div>
 
-                            {/* Quick Actions */}
+                            {/* ID Photo reminder */}
+                            {idImageFile && (
+                                <div className="rounded-xl bg-[#edbc1d]/5 border border-[#edbc1d]/20 p-4 text-left">
+                                    <p className="text-sm font-semibold text-[#edbc1d] mb-1">Next step: Send your ID photo</p>
+                                    <p className="text-xs text-gray-400">
+                                        Please send <span className="text-white font-medium">{idImageFile.name}</span> via WhatsApp
+                                        to complete verification.
+                                    </p>
+                                </div>
+                            )}
+
                             <div className="pt-6 border-t border-white/10 space-y-3">
                                 <p className="text-xs text-gray-500 uppercase tracking-widest">
                                     Need a faster response?
@@ -79,7 +143,7 @@ export default function RentalApplicationPage() {
                                 >
                                     <a
                                         href={generateWhatsAppLink(
-                                            "Hi, I just submitted a rental application. I'd like to confirm the status of my request."
+                                            `Hi, I just submitted a rental application${preselectedVehicle ? ` for the ${preselectedVehicle}` : ""}. I'd like to confirm the status of my request.`
                                         )}
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -108,7 +172,6 @@ export default function RentalApplicationPage() {
 
     return (
         <div className="bg-[#0F172A] text-white font-display min-h-screen selection:bg-[#edbc1d] selection:text-black">
-            {/* Background Decoration */}
             <div className="fixed top-0 right-0 w-1/2 h-screen bg-[#edbc1d]/5 blur-[120px] rounded-full pointer-events-none" />
             <div className="fixed bottom-0 left-0 w-1/3 h-screen bg-blue-900/10 blur-[100px] rounded-full pointer-events-none" />
 
@@ -118,27 +181,18 @@ export default function RentalApplicationPage() {
                     <nav aria-label="Breadcrumb" className="flex mb-8 text-sm text-gray-400">
                         <ol className="inline-flex items-center space-x-1 md:space-x-3">
                             <li className="inline-flex items-center">
-                                <Link
-                                    href="/"
-                                    className="hover:text-[#edbc1d] transition-colors flex items-center gap-1"
-                                >
+                                <Link href="/" className="hover:text-[#edbc1d] transition-colors flex items-center gap-1">
                                     <Home className="w-4 h-4" /> Home
                                 </Link>
                             </li>
-                            <li>
-                                <ChevronRight className="w-4 h-4 mx-1" />
-                            </li>
+                            <li><ChevronRight className="w-4 h-4 mx-1" /></li>
                             <li>
                                 <Link href="/rentals" className="hover:text-[#edbc1d] transition-colors">
                                     Rentals
                                 </Link>
                             </li>
-                            <li>
-                                <ChevronRight className="w-4 h-4 mx-1" />
-                            </li>
-                            <li aria-current="page" className="text-white font-medium">
-                                Apply to Rent
-                            </li>
+                            <li><ChevronRight className="w-4 h-4 mx-1" /></li>
+                            <li aria-current="page" className="text-white font-medium">Apply to Rent</li>
                         </ol>
                     </nav>
 
@@ -155,8 +209,24 @@ export default function RentalApplicationPage() {
                             </p>
                         </div>
 
+                        {/* Selected Vehicle Banner */}
+                        {preselectedVehicle && (
+                            <div className="mb-8 rounded-xl bg-[#edbc1d]/5 border border-[#edbc1d]/20 px-4 py-4 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-[#edbc1d]/10 flex items-center justify-center shrink-0">
+                                    <Car className="w-5 h-5 text-[#edbc1d]" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-400 uppercase tracking-widest mb-0.5">Applying for</p>
+                                    <p className="text-white font-bold">{preselectedVehicle}</p>
+                                </div>
+                                <Link href="/rentals" className="ml-auto text-xs text-gray-500 hover:text-[#edbc1d] transition-colors">
+                                    Change →
+                                </Link>
+                            </div>
+                        )}
+
                         <form onSubmit={handleSubmit} className="space-y-8">
-                            {/* Personal Information */}
+                            {/* ─── PERSONAL INFORMATION ─── */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-bold text-[#edbc1d] uppercase tracking-widest flex items-center gap-2">
                                     <User className="w-4 h-4" />
@@ -170,6 +240,7 @@ export default function RentalApplicationPage() {
                                         </label>
                                         <input
                                             id="firstName"
+                                            name="firstName"
                                             type="text"
                                             required
                                             placeholder="e.g. Kwame"
@@ -182,6 +253,7 @@ export default function RentalApplicationPage() {
                                         </label>
                                         <input
                                             id="lastName"
+                                            name="lastName"
                                             type="text"
                                             required
                                             placeholder="e.g. Asante"
@@ -197,6 +269,7 @@ export default function RentalApplicationPage() {
                                     </label>
                                     <input
                                         id="phone"
+                                        name="phone"
                                         type="tel"
                                         required
                                         placeholder="+233 XX XXX XXXX"
@@ -211,6 +284,7 @@ export default function RentalApplicationPage() {
                                     </label>
                                     <input
                                         id="email"
+                                        name="email"
                                         type="email"
                                         required
                                         placeholder="kwame@example.com"
@@ -219,10 +293,9 @@ export default function RentalApplicationPage() {
                                 </div>
                             </div>
 
-                            {/* Divider */}
                             <div className="border-t border-white/10" />
 
-                            {/* ID Verification */}
+                            {/* ─── ID VERIFICATION ─── */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-bold text-[#edbc1d] uppercase tracking-widest flex items-center gap-2">
                                     <Shield className="w-4 h-4" />
@@ -234,43 +307,108 @@ export default function RentalApplicationPage() {
                                         <CreditCard className="w-4 h-4 text-[#edbc1d]" />
                                         ID Type <span className="text-red-400">*</span>
                                     </label>
-                                    <select id="idType" required className={selectClasses} defaultValue="">
-                                        <option value="" disabled className="bg-[#0a192f] text-gray-500">
-                                            Select ID type
-                                        </option>
-                                        <option value="ghana-card" className="bg-[#0a192f] text-white">
-                                            Ghana Card
-                                        </option>
-                                        <option value="passport" className="bg-[#0a192f] text-white">
-                                            Passport
-                                        </option>
-                                        <option value="drivers-license" className="bg-[#0a192f] text-white">
-                                            Driver&apos;s License
-                                        </option>
-                                        <option value="voters-id" className="bg-[#0a192f] text-white">
-                                            Voter&apos;s ID
-                                        </option>
-                                    </select>
+                                    <div className="relative">
+                                        <select id="idType" name="idType" required className={selectClasses} defaultValue="">
+                                            <option value="" disabled className="bg-[#0a192f] text-gray-500">
+                                                Select ID type
+                                            </option>
+                                            <option value="Ghana Card" className="bg-[#0a192f] text-white">
+                                                Ghana Card
+                                            </option>
+                                            <option value="Passport" className="bg-[#0a192f] text-white">
+                                                Passport
+                                            </option>
+                                            <option value="Driver's License" className="bg-[#0a192f] text-white">
+                                                Driver&apos;s License
+                                            </option>
+                                            <option value="Voter's ID" className="bg-[#0a192f] text-white">
+                                                Voter&apos;s ID
+                                            </option>
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] pointer-events-none">▼</div>
+                                    </div>
                                 </div>
 
+                                {/* ID Photo Upload */}
                                 <div className="space-y-2">
-                                    <label htmlFor="idNumber" className={labelClasses}>
-                                        ID Number <span className="text-red-400">*</span>
+                                    <label className={labelClasses}>
+                                        <Upload className="w-4 h-4 text-[#edbc1d]" />
+                                        Photo of ID <span className="text-red-400">*</span>
                                     </label>
-                                    <input
-                                        id="idNumber"
-                                        type="text"
-                                        required
-                                        placeholder="Enter your ID number"
-                                        className={inputClasses}
-                                    />
+
+                                    <div
+                                        className="relative border-2 border-dashed rounded-xl overflow-hidden cursor-pointer transition-colors group"
+                                        style={{ borderColor: idImageFile ? "rgba(237,188,29,0.5)" : "rgba(255,255,255,0.12)" }}
+                                        onClick={() => document.getElementById("idImage")?.click()}
+                                    >
+                                        <input
+                                            type="file"
+                                            id="idImage"
+                                            name="idImage"
+                                            accept="image/*,.pdf"
+                                            className="hidden"
+                                            onChange={handleIdImageChange}
+                                            required
+                                        />
+
+                                        {idImagePreview ? (
+                                            /* Image Preview */
+                                            <div className="relative">
+                                                <img
+                                                    src={idImagePreview}
+                                                    alt="ID Preview"
+                                                    className="w-full h-48 object-cover"
+                                                />
+                                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <p className="text-white text-sm font-semibold bg-black/60 px-3 py-1 rounded-full">
+                                                        Click to change photo
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            /* Upload Prompt */
+                                            <div className="py-10 flex flex-col items-center gap-3 text-gray-500 hover:bg-white/[0.02] transition-colors">
+                                                <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#edbc1d]/10 transition-colors">
+                                                    <Upload className="w-6 h-6 text-gray-600 group-hover:text-[#edbc1d] transition-colors" />
+                                                </div>
+                                                <div className="text-center">
+                                                    <p className="text-sm font-medium text-gray-300">
+                                                        Click to upload your ID photo
+                                                    </p>
+                                                    <p className="text-xs mt-1 text-gray-600">
+                                                        Ghana Card, Passport, or Driver&apos;s License — JPG, PNG or PDF
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* File selected indicator */}
+                                    {idImageFile && (
+                                        <div className="flex items-center justify-between bg-[#edbc1d]/5 border border-[#edbc1d]/20 rounded-lg px-3 py-2">
+                                            <p className="text-xs text-[#edbc1d] flex items-center gap-1.5 font-medium">
+                                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                                {idImageFile.name}
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); clearIdImage(); }}
+                                                className="text-gray-500 hover:text-white transition-colors"
+                                            >
+                                                <X className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    <p className="text-xs text-gray-500">
+                                        After submitting, you&apos;ll be asked to also send this photo directly via WhatsApp to complete verification.
+                                    </p>
                                 </div>
                             </div>
 
-                            {/* Divider */}
                             <div className="border-t border-white/10" />
 
-                            {/* Rental Details */}
+                            {/* ─── RENTAL DETAILS ─── */}
                             <div className="space-y-4">
                                 <h3 className="text-sm font-bold text-[#edbc1d] uppercase tracking-widest flex items-center gap-2">
                                     <Calendar className="w-4 h-4" />
@@ -284,6 +422,7 @@ export default function RentalApplicationPage() {
                                         </label>
                                         <input
                                             id="startDate"
+                                            name="startDate"
                                             type="date"
                                             required
                                             className={inputClasses}
@@ -295,6 +434,7 @@ export default function RentalApplicationPage() {
                                         </label>
                                         <input
                                             id="endDate"
+                                            name="endDate"
                                             type="date"
                                             required
                                             className={inputClasses}
@@ -302,58 +442,60 @@ export default function RentalApplicationPage() {
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="vehiclePreference" className={labelClasses}>
-                                        <Car className="w-4 h-4 text-[#edbc1d]" />
-                                        Vehicle Preference{" "}
-                                        <span className="text-gray-500 font-normal">(Optional)</span>
-                                    </label>
-                                    <select
-                                        id="vehiclePreference"
-                                        className={selectClasses}
-                                        defaultValue=""
-                                    >
-                                        <option value="" className="bg-[#0a192f] text-gray-500">
-                                            Select vehicle type
-                                        </option>
-                                        <option value="any" className="bg-[#0a192f] text-white">
-                                            Any Available
-                                        </option>
-                                        <option value="sedan" className="bg-[#0a192f] text-white">
-                                            Sedan
-                                        </option>
-                                        <option value="suv" className="bg-[#0a192f] text-white">
-                                            SUV
-                                        </option>
-                                        <option value="van" className="bg-[#0a192f] text-white">
-                                            Van (12+ seats)
-                                        </option>
-                                        <option value="bus" className="bg-[#0a192f] text-white">
-                                            Bus (30+ seats)
-                                        </option>
-                                    </select>
-                                </div>
+                                {/* Vehicle: locked if preselected, dropdown if not */}
+                                {preselectedVehicle ? (
+                                    <input type="hidden" name="vehiclePreference" value={preselectedVehicle} />
+                                ) : (
+                                    <div className="space-y-2">
+                                        <label htmlFor="vehiclePreference" className={labelClasses}>
+                                            <Car className="w-4 h-4 text-[#edbc1d]" />
+                                            Vehicle Preference{" "}
+                                            <span className="text-gray-500 font-normal">(Optional)</span>
+                                        </label>
+                                        <div className="relative">
+                                            <select
+                                                id="vehiclePreference"
+                                                name="vehiclePreference"
+                                                className={selectClasses}
+                                                defaultValue=""
+                                            >
+                                                <option value="" className="bg-[#0a192f] text-gray-500">
+                                                    Select vehicle type
+                                                </option>
+                                                <option value="Any Available" className="bg-[#0a192f] text-white">
+                                                    Any Available
+                                                </option>
+                                                <option value="Sedan" className="bg-[#0a192f] text-white">
+                                                    Sedan
+                                                </option>
+                                                <option value="SUV" className="bg-[#0a192f] text-white">
+                                                    SUV
+                                                </option>
+                                                <option value="Van (12+ seats)" className="bg-[#0a192f] text-white">
+                                                    Van (12+ seats)
+                                                </option>
+                                                <option value="Bus (30+ seats)" className="bg-[#0a192f] text-white">
+                                                    Bus (30+ seats)
+                                                </option>
+                                            </select>
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] pointer-events-none">▼</div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Disclaimer */}
                             <div className="rounded-xl bg-[#0a192f]/80 border border-white/10 p-4 text-sm text-gray-400">
                                 <p>
                                     By submitting this form, you agree to our{" "}
-                                    <Link
-                                        href="/terms"
-                                        className="underline text-[#edbc1d]/80 hover:text-[#edbc1d]"
-                                    >
+                                    <Link href="/contact" className="underline text-[#edbc1d]/80 hover:text-[#edbc1d]">
                                         Terms of Service
                                     </Link>{" "}
                                     and{" "}
-                                    <Link
-                                        href="/privacy"
-                                        className="underline text-[#edbc1d]/80 hover:text-[#edbc1d]"
-                                    >
+                                    <Link href="/contact" className="underline text-[#edbc1d]/80 hover:text-[#edbc1d]">
                                         Privacy Policy
                                     </Link>
-                                    . Your information will only be used for rental verification
-                                    purposes.
+                                    . Your information will only be used for rental verification purposes.
                                 </p>
                             </div>
 
@@ -418,5 +560,13 @@ export default function RentalApplicationPage() {
                 </div>
             </main>
         </div>
+    );
+}
+
+export default function RentalApplicationPage() {
+    return (
+        <Suspense fallback={null}>
+            <RentalApplicationForm />
+        </Suspense>
     );
 }

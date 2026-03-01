@@ -171,7 +171,21 @@ export default function ContactPage() {
         }
 
         setIsSubmitting(true);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const serviceLabel = SERVICE_OPTIONS.find(s => s.value === formData.subject)?.label ?? formData.subject;
+        const waMessage = [
+            "🔔 New Website Enquiry",
+            "",
+            `Name: ${formData.name}`,
+            `Email: ${formData.email}`,
+            formData.phone ? `Phone: ${formData.phone}` : null,
+            `Service: ${serviceLabel}`,
+            "",
+            "Message:",
+            formData.message,
+            "",
+            "— Sent from RoyalDynamite.com",
+        ].filter(Boolean).join("\n");
+        window.open(generateWhatsAppLink(waMessage), "_blank", "noopener,noreferrer");
         setIsSubmitting(false);
         setIsSubmitted(true);
     }
@@ -613,7 +627,6 @@ export default function ContactPage() {
                             <div className="glass-panel p-6 rounded-2xl bg-white/5">
                                 <h4 className="text-xs font-bold uppercase text-[#D4AF37] mb-3 tracking-wider">Physical Address</h4>
                                 <p className="text-sm leading-relaxed text-slate-400">
-                                    Suite 402, Dynamite Towers<br />
                                     Adenta - Bulldog<br />
                                     Accra, Ghana
                                 </p>
