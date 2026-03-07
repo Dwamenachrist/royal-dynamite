@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 interface DualRangeSliderProps {
@@ -27,7 +27,7 @@ export function DualRangeSlider({
     const range = useRef<HTMLDivElement>(null);
 
     // Convert to percentage
-    const getPercent = (value: number) => Math.round(((value - min) / (max - min)) * 100);
+    const getPercent = useCallback((value: number) => Math.round(((value - min) / (max - min)) * 100), [min, max]);
 
     // Set width of the range to decrease from the left side
     useEffect(() => {
@@ -53,13 +53,12 @@ export function DualRangeSlider({
     useEffect(() => {
         // Update local state if props change (external reset)
         if (value[0] !== minValRef.current || value[1] !== maxValRef.current) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMinVal(value[0]);
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaxVal(value[1]);
             minValRef.current = value[0];
             maxValRef.current = value[1];
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value[0], value[1]]);
 
     return (

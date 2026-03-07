@@ -4,20 +4,13 @@ export const SITE_CONFIG = {
     tagline: "Premium Vehicles. Trusted Service.",
     description:
         "Ghana's trusted destination for vehicle sales, rentals, transport services, and freight forwarding since 2015.",
-    address: "Adenta - Bulldog, Accra, Ghana",
-    phone: "+233 24 056 6708",
-    phoneUAE: "+971 52 856 6255",
-    whatsapp: "+233240566708",
-    email: "dynamiteroyal43@gmail.com",
+    address: "Airport Residential Area, Accra, Ghana",
+    phone: "+233 30 274 5678",
+    whatsapp: "+233244000000",
+    email: "info@royaldynamite.com",
     businessHours: "Mon - Fri: 8:00 AM - 6:00 PM | Sat: 9:00 AM - 2:00 PM",
     yearEstablished: 2015,
-    partners: [
-        "Yakman Group of Companies",
-        "Kwarteng and Co Consult",
-        "Double C Enterprise",
-        "Askraf International Company Ltd",
-        "Agye Nyame Company",
-    ],
+    partners: ["Yakman Group", "Kwarteng & Co Consult"],
 };
 
 // Navigation Links
@@ -50,6 +43,33 @@ export function generateWhatsAppLink(
     const encodedMessage = encodeURIComponent(message);
     return `https://wa.me/${phone.replace(/\D/g, "")}?text=${encodedMessage}`;
 }
+
+// Vehicle Makes for Filter Dropdowns
+export const VEHICLE_MAKES = [
+    "Any Make",
+    "BMW",
+    "Land Rover",
+    "Lexus",
+    "Mercedes-Benz",
+    "Toyota",
+] as const
+
+// Body Styles for Filter Dropdowns
+export const BODY_STYLES = [
+    { value: "all", label: "All Vehicles" },
+    { value: "suv", label: "SUVs" },
+    { value: "sedan", label: "Sedans" },
+    { value: "pickup", label: "Pickups" },
+    { value: "van", label: "Vans" },
+    { value: "bus", label: "Buses" },
+    { value: "coupe", label: "Coupes" },
+    { value: "hatchback", label: "Hatchbacks" },
+] as const
+
+// Image Upload Constraints
+export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+export const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"] as const;
+export const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 // Format Currency (Ghana Cedis)
 export function formatCurrency(amount: number | null): string {

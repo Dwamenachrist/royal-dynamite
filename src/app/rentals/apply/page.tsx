@@ -354,6 +354,7 @@ function RentalApplicationForm() {
                                         {idImagePreview ? (
                                             /* Image Preview */
                                             <div className="relative">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img
                                                     src={idImagePreview}
                                                     alt="ID Preview"

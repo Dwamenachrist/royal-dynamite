@@ -10,12 +10,12 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Vehicle } from "@/types"
+import type { DbVehicle } from "@/types/database"
 
 interface VehicleDeleteDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    vehicle: Vehicle | null
+    vehicle: DbVehicle | null
     onConfirm: () => void
 }
 

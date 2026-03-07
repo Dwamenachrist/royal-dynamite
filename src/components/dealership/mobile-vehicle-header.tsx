@@ -2,15 +2,17 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { MessageSquare } from "lucide-react"
-import { generateWhatsAppLink } from "@/lib/constants"
+import { generateWhatsAppLink, formatCurrency } from "@/lib/constants"
+
+import { Vehicle } from "@/types"
 
 interface MobileVehicleHeaderProps {
-    vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    vehicle: Vehicle
 }
 
 export function MobileVehicleHeader({ vehicle }: MobileVehicleHeaderProps) {
     return (
-        <div className="lg:hidden space-y-6 mt-6 mb-8">
+        <div className="lg:hidden -mt-12 mb-8 relative z-20 backdrop-blur-xl bg-[#0F172A]/80 border border-white/10 p-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] space-y-6 mx-[-1rem]">
             {/* Header */}
             <div className="space-y-2">
                 <div className="flex items-center gap-2 text-[#edbc1d] text-xs font-bold uppercase tracking-widest">
@@ -26,12 +28,12 @@ export function MobileVehicleHeader({ vehicle }: MobileVehicleHeaderProps) {
             {/* Price */}
             <div className="border-b border-white/10 pb-6">
                 <div className={vehicle.status === 'sale'
-                    ? "text-xl font-semibold text-white/70 italic tracking-wide"
-                    : "text-4xl font-bold text-[#edbc1d] tracking-tight"
+                    ? "text-xl font-semibold text-white/70 italic tracking-wide truncate"
+                    : "text-4xl font-bold text-[#edbc1d] tracking-tight truncate"
                 }>
                     {vehicle.status === 'sale'
                         ? 'Contact for Price'
-                        : `GH₵ ${vehicle.dailyRate}/day`}
+                        : `${formatCurrency(vehicle.dailyRate)}/day`}
                 </div>
                 {vehicle.status !== 'sale' && (
                     <span className="text-xs text-gray-500 mt-2 block">*Comprehensive insurance included</span>

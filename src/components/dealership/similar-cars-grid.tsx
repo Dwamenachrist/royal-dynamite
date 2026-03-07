@@ -1,6 +1,5 @@
 import React from "react"
 import { Vehicle } from "@/types" // Ensure this type exists or import from mock-data
-import Image from "next/image"
 import Link from "next/link"
 
 interface SimilarCarsGridProps {

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Vehicle } from "@/types";
 import { StitchVehicleCard } from "./vehicle-card";
 import { StitchFilterSidebar, StitchFilters } from "./filter-sidebar";
+import { MobileFilterSheet } from "./mobile-filter-sheet";
 
 
 interface StitchDealershipLayoutProps {
@@ -19,11 +20,13 @@ export function StitchDealershipLayout({
     const [filters, setFilters] = useState<StitchFilters>({
         searchTerm: "",
         bodyStyle: "all",
-        priceRange: [0, 500000],
+        priceRange: [20000, 1000000],
         make: "Any Make",
         model: "Any Model",
         yearRange: [2000, 2025],
     });
+
+
 
     const handleFiltersChange = (newFilters: StitchFilters) => {
         setFilters(newFilters);
@@ -57,8 +60,9 @@ export function StitchDealershipLayout({
             // 3. Make
             if (filters.make !== "Any Make" && v.make !== filters.make) return false;
 
-            // 4. Price Range
-            if ((v.price ?? 0) < filters.priceRange[0] || (v.price ?? 0) > filters.priceRange[1]) return false;
+            // 4. Price range (Dual Handles)
+            const price = v.price ?? 0;
+            if (price > 0 && (price < filters.priceRange[0] || price > filters.priceRange[1])) return false;
 
             // 5. Year Range
             if (v.year < filters.yearRange[0] || v.year > filters.yearRange[1]) return false;
@@ -74,12 +78,19 @@ export function StitchDealershipLayout({
     );
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8 relative z-10">
+        <div className="flex flex-col lg:flex-row gap-8 relative z-10 w-full max-w-full">
+            <MobileFilterSheet
+                filters={filters}
+                onFilterChange={handleFiltersChange}
+            />
+
             {/* Sidebar */}
-            <StitchFilterSidebar onFilterChange={handleFiltersChange} />
+            <div className="hidden lg:block w-80 shrink-0">
+                <StitchFilterSidebar onFilterChange={handleFiltersChange} />
+            </div>
 
             {/* Grid Content */}
-            <div className="flex-grow">
+            <div className="flex-grow w-full min-w-0">
                 {/* Sort & Count Header */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b border-white/5">
                     <div>
@@ -102,12 +113,12 @@ export function StitchDealershipLayout({
                 </div>
 
                 {/* Vehicle Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <div className="grid gap-6 md:gap-8 w-full max-w-full" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(380px, 100%), 1fr))' }}>
                     {pagedVehicles.map((vehicle) => (
                         <StitchVehicleCard key={vehicle.id} vehicle={vehicle} />
                     ))}
                     {pagedVehicles.length === 0 && (
-                        <div className="col-span-3 py-24 text-center text-slate-500">
+                        <div className="col-span-1 md:col-span-2 xl:col-span-3 py-24 text-center text-slate-500">
                             No vehicles match your filters.
                         </div>
                     )}

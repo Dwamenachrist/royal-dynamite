@@ -7,7 +7,7 @@ import { useRef } from "react";
 
 export function StatsSection() {
     return (
-        <section className="py-12 border-y border-white/5 bg-background-dark">
+        <section className="py-16 border-y border-white/5 bg-background-dark">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/10">
                     <StatItem end={5} suffix="+" label="Years Experience" />

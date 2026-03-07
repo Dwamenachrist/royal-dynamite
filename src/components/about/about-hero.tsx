@@ -7,7 +7,7 @@ import { ArrowDown } from "lucide-react"
 
 export function AboutHero() {
     return (
-        <header className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-background-dark">
+        <header className="relative min-h-[100dvh] w-full overflow-hidden flex items-center justify-center bg-background-dark">
             {/* Background Image with Overlay */}
             <div className="absolute inset-0 z-0">
                 <Image
@@ -32,7 +32,7 @@ export function AboutHero() {
                     Ghana&apos;s Premier Automotive Concierge
                 </motion.h2>
 
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight tracking-tight mb-8">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight tracking-tight mb-8">
                     <motion.span
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}

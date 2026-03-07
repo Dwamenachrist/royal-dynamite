@@ -7,8 +7,10 @@ import { Phone, MapPin } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
 import { generateWhatsAppLink, SITE_CONFIG } from "@/lib/constants"
 
+import { Vehicle } from "@/types"
+
 interface VehicleActionPanelProps {
-    vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    vehicle: Vehicle
     className?: string
 }
 
@@ -52,10 +54,10 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
 
                     {/* Quick Specs Grid */}
                     <div className="grid grid-cols-2 gap-4 mb-8">
-                        <QuickSpec label="Mileage" value={`${vehicle.mileage.toLocaleString()} km`} icon="speed" />
-                        <QuickSpec label="Engine" value={vehicle.engineSize} icon="settings" />
-                        <QuickSpec label="Fuel" value={vehicle.fuelType} icon="local_gas_station" />
-                        <QuickSpec label="Trans." value={vehicle.transmission} icon="auto_mode" />
+                        <QuickSpec label="Mileage" value={vehicle.mileage != null ? `${vehicle.mileage.toLocaleString()} km` : "N/A"} />
+                        <QuickSpec label="Engine" value={vehicle.engineSize || "N/A"} />
+                        <QuickSpec label="Fuel" value={vehicle.fuelType || "N/A"} />
+                        <QuickSpec label="Trans." value={vehicle.transmission || "N/A"} />
                     </div>
 
                     {/* VIP Action Block */}
@@ -91,7 +93,7 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
                         <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white/20">
                             <div className="absolute inset-0 bg-gray-600 animate-pulse" /> {/* Placeholder if image fail */}
                             {/* Using a placeholder avatar for now */}
-                            <img src="https://i.pravatar.cc/150?u=kwame" alt="Consultant" className="object-cover w-full h-full" />
+                            <Image src="https://i.pravatar.cc/150?u=kwame" alt="Consultant" fill sizes="48px" className="object-cover" />
                         </div>
                         <div>
                             <p className="text-xs text-gray-400 uppercase tracking-wide">Sales Consultant</p>
@@ -130,7 +132,7 @@ export function VehicleActionPanel({ vehicle, className }: VehicleActionPanelPro
     )
 }
 
-function QuickSpec({ label, value, icon }: { label: string, value: string, icon: string }) {
+function QuickSpec({ label, value }: { label: string, value: string }) {
     return (
         <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 text-gray-400 text-xs uppercase tracking-wider">

@@ -35,10 +35,13 @@ export function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const [prevPathname, setPrevPathname] = useState(pathname);
+
     /* Close mobile menu when user navigates (pathname changes) */
-    useEffect(() => {
+    if (pathname !== prevPathname) {
+        setPrevPathname(pathname);
         setIsOpen(false);
-    }, [pathname]);
+    }
 
     function isActive(href: string): boolean {
         if (href === "/") return pathname === "/";
@@ -159,10 +162,10 @@ export function Navbar() {
 
                 <Sheet open={isOpen} onOpenChange={setIsOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                            <Menu className="h-5 w-5" />
+                        <button className="text-white hover:bg-white/10 p-2 rounded-md transition-colors">
+                            <Menu className="h-8 w-8" strokeWidth={1.5} />
                             <span className="sr-only">Menu</span>
-                        </Button>
+                        </button>
                     </SheetTrigger>
                     <SheetContent side="right" className="bg-rd-navy border-l border-white/[0.06] text-white w-[300px] p-0 z-[60]">
                         <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
@@ -185,7 +188,7 @@ export function Navbar() {
 
                         {/* Navigation */}
                         <nav className="flex flex-col p-3">
-                            {/* Home link — explicit for mobile */}
+                            {/* Home link */}
                             <Link
                                 href="/"
                                 onClick={() => setIsOpen(false)}

@@ -5,26 +5,32 @@ import { TrustBar } from "@/components/dealership/trust-bar"
 import { SpecsTabs } from "@/components/dealership/specs-tabs"
 import { MobileVehicleHeader } from "@/components/dealership/mobile-vehicle-header"
 import { MobileVehicleFooter } from "@/components/dealership/mobile-vehicle-footer"
+import { StickyMobileCTA } from "@/components/dealership/sticky-mobile-cta"
 import { SimilarCarsGrid } from "@/components/dealership/similar-cars-grid"
-import { getVehicleById, MOCK_VEHICLES, getReviewsByVehicleId } from "@/lib/mock-data"
-import { RentalReviews } from "@/components/rentals/rental-reviews"
+import { getVehicleById, getSaleVehicles } from "@/lib/supabase/queries"
+import { dbVehicleToVehicle, dbVehiclesToVehicles } from "@/lib/utils/mapVehicle"
 import Link from "next/link"
 import { ChevronRight, Home } from "lucide-react"
 
-export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    // In a real app we'd await params
-    const id = (await params).id
-    const vehicle = getVehicleById(id)
-    const reviews = getReviewsByVehicleId(id)
+export const revalidate = 60
 
-    if (!vehicle) {
+export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const id = (await params).id
+    const dbVehicle = await getVehicleById(id)
+
+    if (!dbVehicle) {
         return notFound()
     }
 
-    // Get similar vehicles (mock logic: same category, different ID)
-    const similarVehicles = MOCK_VEHICLES
-        .filter(v => v.category === vehicle.category && v.id !== vehicle.id)
-        .slice(0, 3)
+    const vehicle = dbVehicleToVehicle(dbVehicle)
+
+    // Get similar vehicles (same category, different ID)
+    const allSaleVehicles = await getSaleVehicles()
+    const similarVehicles = dbVehiclesToVehicles(
+        allSaleVehicles
+            .filter(v => v.body_type === dbVehicle.body_type && v.id !== dbVehicle.id)
+            .slice(0, 3)
+    )
 
     return (
         <div className="bg-[#0F172A] text-white font-display min-h-screen selection:bg-[#edbc1d] selection:text-black">
@@ -32,7 +38,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
             <div className="fixed top-0 right-0 w-1/2 h-screen bg-[#edbc1d]/5 blur-[120px] rounded-full pointer-events-none" />
             <div className="fixed bottom-0 left-0 w-1/3 h-screen bg-blue-900/10 blur-[100px] rounded-full pointer-events-none" />
 
-            <main className="pt-24 pb-12 relative overflow-hidden">
+            <main className="pt-24 pb-12 lg:pb-12 relative overflow-x-clip" style={{ paddingBottom: "max(5rem, calc(3rem + env(safe-area-inset-bottom, 0px)))" }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     {/* Breadcrumb */}
                     <nav aria-label="Breadcrumb" className="flex mb-6 text-sm text-gray-400">
@@ -76,21 +82,17 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                         </div>
                     </div>
 
-                    {/* REVIEWS SECTION — Full Width, below 2-column layout */}
-                    <div id="reviews" className="mt-16 pt-12 border-t border-white/10">
-                        <h2 className="text-2xl font-display font-bold text-white mb-8 flex items-center gap-3">
-                            Client Experiences
-                            <span className="text-sm font-sans font-normal text-gray-500 bg-white/5 px-2 py-1 rounded-md">
-                                {reviews.length} Verified
-                            </span>
-                        </h2>
-                        <RentalReviews reviews={reviews} />
-                    </div>
-
                     {/* Recirculation: You May Also Like */}
                     <SimilarCarsGrid vehicles={similarVehicles} />
                 </div>
             </main>
+
+            {/* Sticky Mobile CTA — always accessible on scroll */}
+            <StickyMobileCTA
+                vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                vehicleId={vehicle.id}
+                mode="sale"
+            />
         </div>
     )
 }

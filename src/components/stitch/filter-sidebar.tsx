@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Search, SlidersHorizontal, CarFront, Truck, Car } from "lucide-react";
+import { VEHICLE_MAKES } from "@/lib/constants";
 import { Slider } from "@/components/ui/slider";
 
 // Types for our filters
@@ -43,7 +44,7 @@ export function StitchFilterSidebar({
         isRental ? [50, 2000] : [20000, 800000]
     );
 
-    const handleFilterChange = (key: keyof StitchFilters, value: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    const handleFilterChange = (key: keyof StitchFilters, value: string | [number, number]) => {
         const newFilters = { ...filters, [key]: value };
         setFilters(newFilters);
         onFilterChange(newFilters);
@@ -221,11 +222,9 @@ export function StitchFilterSidebar({
                             onChange={(e) => handleFilterChange("make", e.target.value)}
                             className="w-full bg-[#0a192f] border border-white/10 text-white rounded-xl px-4 py-3 text-sm appearance-none focus:border-rd-gold focus:outline-none transition-colors shadow-inner cursor-pointer"
                         >
-                            <option value="Any Make">Any Make</option>
-                            <option value="Mercedes-Benz">Mercedes-Benz</option>
-                            <option value="Land Rover">Land Rover</option>
-                            <option value="Toyota">Toyota</option>
-                            <option value="Lexus">Lexus</option>
+                            {VEHICLE_MAKES.map((make) => (
+                                <option key={make} value={make}>{make}</option>
+                            ))}
                         </select>
                         <div className="absolute right-4 bottom-3.5 pointer-events-none text-slate-500 text-[10px]">▼</div>
                     </div>

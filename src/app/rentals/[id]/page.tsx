@@ -1,20 +1,22 @@
 import React from "react"
+import type { Vehicle } from "@/types"
 import { notFound } from "next/navigation"
 import { VehicleGallery } from "@/components/dealership/vehicle-gallery"
 import { TrustBar } from "@/components/dealership/trust-bar"
 import { SpecsTabs } from "@/components/dealership/specs-tabs"
 import { MobileVehicleHeader } from "@/components/dealership/mobile-vehicle-header"
 import { MobileVehicleFooter } from "@/components/dealership/mobile-vehicle-footer"
-import { getVehicleById, getRentalVehicles, getReviewsByVehicleId } from "@/lib/mock-data"
+import { getVehicleById, getRentalVehicles } from "@/lib/supabase/queries"
+import { dbVehicleToVehicle, dbVehiclesToVehicles } from "@/lib/utils/mapVehicle"
 import { generateWhatsAppLink, SITE_CONFIG } from "@/lib/constants"
 import { StitchVehicleCard } from "@/components/stitch/vehicle-card"
+import { StickyMobileCTA } from "@/components/dealership/sticky-mobile-cta"
 import Link from "next/link"
-import Image from "next/image"
 import { ChevronRight, Home, Phone, ShieldCheck, MapPin, CheckCircle2 } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import type { Metadata } from "next"
-import { RentalReviews } from "@/components/rentals/rental-reviews"
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -22,34 +24,36 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { id } = await params
-    const vehicle = getVehicleById(id)
-    if (!vehicle) return { title: "Vehicle Not Found | Royal Dynamite" }
+    const dbVehicle = await getVehicleById(id)
+    if (!dbVehicle) return { title: "Vehicle Not Found | Royal Dynamite" }
     return {
-        title: `${vehicle.year} ${vehicle.make} ${vehicle.model} | Rent | Royal Dynamite`,
-        description: vehicle.description,
+        title: `${dbVehicle.year} ${dbVehicle.make} ${dbVehicle.model} | Rent | Royal Dynamite`,
+        description: dbVehicle.description ?? `Rent the ${dbVehicle.year} ${dbVehicle.make} ${dbVehicle.model} from Royal Dynamite.`,
     }
 }
 
 export default async function RentalDetailPage({ params }: PageProps) {
     const { id } = await params
-    const vehicle = getVehicleById(id)
-    const reviews = getReviewsByVehicleId(id)
+    const dbVehicle = await getVehicleById(id)
 
-    if (!vehicle) {
+    if (!dbVehicle) {
         return notFound()
     }
 
-    // Get similar rental vehicles (same category, different ID)
-    const allRentals = getRentalVehicles()
-    const similarVehicles = allRentals
-        .filter(v => v.category === vehicle.category && v.id !== vehicle.id)
+    const vehicle = dbVehicleToVehicle(dbVehicle)
+
+    // Get similar rental vehicles
+    const allRentals = await getRentalVehicles()
+    const similarDb = allRentals
+        .filter(v => v.body_type === dbVehicle.body_type && v.id !== dbVehicle.id)
         .slice(0, 3)
 
-    // If not enough from same category, fill from other rentals
-    const finalSimilar = similarVehicles.length >= 3
-        ? similarVehicles
-        : [...similarVehicles, ...allRentals.filter(v => v.id !== vehicle.id && !similarVehicles.find(s => s.id === v.id)).slice(0, 3 - similarVehicles.length)]
+    // If not enough from same body type, fill from other rentals
+    const finalSimilarDb = similarDb.length >= 3
+        ? similarDb
+        : [...similarDb, ...allRentals.filter(v => v.id !== dbVehicle.id && !similarDb.find(s => s.id === v.id)).slice(0, 3 - similarDb.length)]
 
+    const finalSimilar = dbVehiclesToVehicles(finalSimilarDb)
     const whatsappMessage = `Hello, I am interested in renting the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Is it available?`
 
     return (
@@ -58,7 +62,7 @@ export default async function RentalDetailPage({ params }: PageProps) {
             <div className="fixed top-0 right-0 w-1/2 h-screen bg-[#edbc1d]/5 blur-[120px] rounded-full pointer-events-none" />
             <div className="fixed bottom-0 left-0 w-1/3 h-screen bg-blue-900/10 blur-[100px] rounded-full pointer-events-none" />
 
-            <main className="pt-24 pb-12 relative overflow-hidden">
+            <main className="pt-24 pb-12 relative overflow-hidden" style={{ paddingBottom: "max(5rem, calc(3rem + env(safe-area-inset-bottom, 0px)))" }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     {/* Breadcrumb */}
                     <nav aria-label="Breadcrumb" className="flex mb-6 text-sm text-gray-400">
@@ -102,17 +106,6 @@ export default async function RentalDetailPage({ params }: PageProps) {
                         </div>
                     </div>
 
-                    {/* REVIEWS SECTION — Full Width, below 2-column layout */}
-                    <div id="reviews" className="mt-16 pt-12 border-t border-white/10">
-                        <h2 className="text-2xl font-display font-bold text-white mb-8 flex items-center gap-3">
-                            Client Experiences
-                            <span className="text-sm font-sans font-normal text-gray-500 bg-white/5 px-2 py-1 rounded-md">
-                                {reviews.length} Verified
-                            </span>
-                        </h2>
-                        <RentalReviews reviews={reviews} />
-                    </div>
-
                     {/* Similar Rentals */}
                     {finalSimilar.length > 0 && (
                         <div className="mt-24 border-t border-white/5 pt-12">
@@ -133,13 +126,19 @@ export default async function RentalDetailPage({ params }: PageProps) {
                     )}
                 </div>
             </main>
+
+            {/* Sticky Mobile CTA — always accessible on scroll */}
+            <StickyMobileCTA
+                vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                vehicleId={vehicle.id}
+                mode="rent"
+            />
         </div>
     )
 }
 
 /* ─── Rental-specific Action Panel ─── */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsappMessage: string }) {
+function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: Vehicle; whatsappMessage: string }) {
     return (
         <div className="w-full relative">
             <div className="lg:sticky lg:top-24 space-y-6">
@@ -170,10 +169,10 @@ function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsap
 
                     {/* Quick Specs Grid */}
                     <div className="grid grid-cols-2 gap-4 mb-8">
-                        <QuickSpec label="Mileage" value={`${vehicle.mileage.toLocaleString()} km`} />
-                        <QuickSpec label="Engine" value={vehicle.engineSize} />
-                        <QuickSpec label="Fuel" value={vehicle.fuelType} />
-                        <QuickSpec label="Trans." value={vehicle.transmission} />
+                        <QuickSpec label="Mileage" value={`${vehicle.mileage?.toLocaleString() ?? 0} km`} />
+                        <QuickSpec label="Fuel" value={vehicle.fuelType ?? "Petrol"} />
+                        <QuickSpec label="Trans." value={vehicle.transmission ?? "Automatic"} />
+                        <QuickSpec label="Color" value={vehicle.color ?? "—"} />
                     </div>
 
                     {/* Availability Badge */}
@@ -227,7 +226,7 @@ function RentalActionPanel({ vehicle, whatsappMessage }: { vehicle: any; whatsap
                     <div className="mt-8 flex items-center gap-4 pt-6 border-t border-white/5">
                         <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white/20">
                             <div className="absolute inset-0 bg-gray-600 animate-pulse" />
-                            <img src="https://i.pravatar.cc/150?u=ama" alt="Consultant" className="object-cover w-full h-full" />
+                            <Image src="https://i.pravatar.cc/150?u=ama" alt="Consultant" fill sizes="48px" className="object-cover" />
                         </div>
                         <div>
                             <p className="text-xs text-gray-400 uppercase tracking-wide">Fleet Manager</p>

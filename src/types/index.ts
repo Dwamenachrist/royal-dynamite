@@ -11,13 +11,13 @@ export interface Vehicle {
     status: VehicleStatus;
     price: number | null; // null = "Contact for Price"
     dailyRate: number | null; // For rentals
-    mileage: number;
-    fuelType: string;
-    transmission: string;
-    engineSize?: string; // e.g. "2.8L"
-    drivetrain?: string; // e.g. "4WD", "FWD", "RWD"
-    color: string;
-    description: string;
+    mileage: number | null;
+    fuelType: string | null;
+    transmission: string | null;
+    engineSize?: string | null; // e.g. "2.8L"
+    drivetrain?: string | null; // e.g. "4WD", "FWD", "RWD"
+    color: string | null;
+    description: string | null;
     features: string[];
     images: string[];
     vin?: string;
@@ -70,4 +70,15 @@ export interface Review {
     verified?: boolean;
     avatar?: string;
     role?: string; // e.g. "Business Traveler", "Family Trip"
+}
+
+// Dashboard Types
+export interface DashboardStats {
+    totalVehicles: number
+    saleVehicles: number
+    rentalVehicles: number
+    totalEnquiries: number
+    newEnquiries: number
+    totalApplications: number
+    pendingApplications: number
 }

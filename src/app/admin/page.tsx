@@ -1,364 +1,197 @@
-"use client"
-
-import { useState } from "react"
+import { getDashboardStats } from "@/lib/supabase/queries"
+import { getVehicles, getEnquiries, getRentalApplications } from "@/lib/supabase/queries"
+import { CarFront, Users, FileText, Plus, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import {
-    AreaChart,
-    Area,
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    ResponsiveContainer,
-    CartesianGrid,
-} from "recharts"
-import { Package, DollarSign, Car, MessageSquare, KeyRound, CheckCircle, Plus, ArrowRight } from "lucide-react"
-import { useVehicles } from "@/contexts/vehicle-context"
-import { MOCK_ENQUIRIES, MOCK_RENTAL_APPS, ENQUIRIES_TREND } from "@/lib/admin-mock-data"
-import KpiCard from "@/components/admin/kpi-card"
-import VehicleFormSheet from "@/components/admin/vehicle-form-sheet"
-import { Vehicle } from "@/types"
 
-const tooltipStyle = {
-    contentStyle: {
-        background: "#0a192f",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: "10px",
-        color: "#fff",
-        fontSize: "12px",
-    },
-    labelStyle: { color: "#edbc1d", fontWeight: "bold" as const },
-    cursor: { fill: "rgba(255,255,255,0.03)" },
-}
+export default async function AdminDashboardPage() {
+    const [stats, vehicles, enquiries, applications] = await Promise.all([
+        getDashboardStats(),
+        getVehicles(),
+        getEnquiries(),
+        getRentalApplications(),
+    ])
 
-const newEnquiries = MOCK_ENQUIRIES.filter((e) => e.status === "new").length
-const pendingRentals = MOCK_RENTAL_APPS.filter(
-    (r) => r.status === "pending" || r.status === "reviewing"
-).length
+    const metrics = [
+        { label: "Vehicles for Sale", value: stats.saleVehicles, icon: CarFront, color: "text-[#C5A572]", bg: "bg-[#C5A572]/10" },
+        { label: "Rental Fleet", value: stats.rentalVehicles, icon: CarFront, color: "text-blue-400", bg: "bg-blue-400/10" },
+        { label: "Open Enquiries", value: stats.newEnquiries, icon: Users, color: "text-emerald-400", bg: "bg-emerald-400/10" },
+        { label: "Pending Rentals", value: stats.pendingApplications, icon: FileText, color: "text-amber-400", bg: "bg-amber-400/10" },
+    ]
 
-export default function AdminOverviewPage() {
-    const { vehicles, addVehicle } = useVehicles()
-    const [addSheetOpen, setAddSheetOpen] = useState(false)
+    // Build activity feed from real data
+    type Activity = { text: string; time: string; type: string }
+    const activities: Activity[] = [
+        ...applications.slice(0, 3).map(app => ({
+            text: `Rental application from ${app.name} — ${app.status}`,
+            time: app.created_at ?? "",
+            type: app.status === "approved" ? "success" : app.status === "pending" ? "warning" : "info",
+        })),
+        ...enquiries.slice(0, 2).map(e => ({
+            text: `${e.service_type === "freight" ? "Freight" : e.service_type === "transport" ? "Transport" : "Sales"} enquiry from ${e.name}`,
+            time: e.created_at ?? "",
+            type: e.status === "new" ? "new" : "info",
+        })),
+    ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5)
 
-    // Dynamic KPI calculations
-    const totalVehicles = vehicles.length
-    const forSale = vehicles.filter((v) => v.status === "sale").length
-    const forRent = vehicles.filter((v) => v.status === "rent").length
-    const available = vehicles.filter((v) => v.isAvailable).length
-
-    // Dynamic bar chart data
-    const categoryOrder = ["suv", "sedan", "luxury", "truck", "van", "bus"]
-    const categoryLabels: Record<string, string> = {
-        suv: "SUV",
-        sedan: "Sedan",
-        luxury: "Luxury",
-        truck: "Truck",
-        van: "Van",
-        bus: "Bus",
-    }
-    const inventoryByCategory = categoryOrder
-        .map((cat) => ({
-            category: categoryLabels[cat],
-            count: vehicles.filter((v) => v.category === cat).length,
-        }))
-        .filter((d) => d.count > 0)
-
-    function handleAddVehicle(data: Omit<Vehicle, "id" | "createdAt" | "updatedAt">) {
-        addVehicle(data)
-        setAddSheetOpen(false)
-    }
+    // Recent vehicles (latest 4)
+    const recentVehicles = vehicles.slice(0, 4)
 
     return (
-        <div className="p-5 sm:p-6 space-y-7 max-w-6xl">
+        <div className="space-y-6 lg:space-y-8 animate-fade-in">
             {/* Header */}
-            <div>
-                <h1 className="text-2xl font-extrabold uppercase text-white">
-                    Dashboard <span className="text-[#edbc1d]">Overview</span>
+            <header>
+                <h1 className="text-xl lg:text-2xl font-bold text-white tracking-widest uppercase">
+                    System Dashboard
                 </h1>
-                <p className="text-gray-400 text-sm mt-1">
-                    Welcome back, Reuben. Here&apos;s what&apos;s happening today.
+                <p className="text-slate-400 mt-1 text-sm">
+                    Royal Dynamite Executive Portal — fleet overview
                 </p>
-            </div>
+            </header>
 
-            {/* KPI Grid — clickable cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <KpiCard
-                    label="Total Inventory"
-                    value={totalVehicles}
-                    icon={Package}
-                    color="text-blue-400"
-                    bgColor="bg-blue-500/10 border-blue-500/20"
-                    href="/admin/inventory"
-                    trend={{ value: 5, direction: "up" }}
-                    subtitle="vs last month"
-                />
-                <KpiCard
-                    label="For Sale"
-                    value={forSale}
-                    icon={DollarSign}
-                    color="text-[#edbc1d]"
-                    bgColor="bg-[#edbc1d]/10 border-[#edbc1d]/20"
-                    href="/admin/inventory"
-                    trend={{ value: 2, direction: "up" }}
-                />
-                <KpiCard
-                    label="For Rent"
-                    value={forRent}
-                    icon={Car}
-                    color="text-purple-400"
-                    bgColor="bg-purple-500/10 border-purple-500/20"
-                    href="/admin/inventory"
-                    trend={{ value: 0, direction: "neutral" }}
-                />
-                <KpiCard
-                    label="New Enquiries"
-                    value={newEnquiries}
-                    icon={MessageSquare}
-                    color="text-green-400"
-                    bgColor="bg-green-500/10 border-green-500/20"
-                    href="/admin/enquiries"
-                    trend={{ value: 40, direction: "up" }}
-                    subtitle="this week"
-                />
-                <KpiCard
-                    label="Pending Rentals"
-                    value={pendingRentals}
-                    icon={KeyRound}
-                    color="text-amber-400"
-                    bgColor="bg-amber-500/10 border-amber-500/20"
-                    href="/admin/rentals"
-                    trend={{ value: 0, direction: "neutral" }}
-                />
-                <KpiCard
-                    label="Available Now"
-                    value={available}
-                    icon={CheckCircle}
-                    color="text-cyan-400"
-                    bgColor="bg-cyan-500/10 border-cyan-500/20"
-                    href="/admin/inventory"
-                    subtitle={`of ${totalVehicles} total`}
-                />
+            {/* Metric Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+                {metrics.map((stat, i) => (
+                    <div
+                        key={i}
+                        className="p-4 lg:p-5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300"
+                    >
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className={`p-2 rounded-lg ${stat.bg}`}>
+                                <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                            </div>
+                        </div>
+                        <p className="text-2xl lg:text-3xl font-bold text-white admin-data-number">
+                            {stat.value}
+                        </p>
+                        <p className="text-[10px] lg:text-xs uppercase tracking-widest text-slate-500 font-semibold mt-1">
+                            {stat.label}
+                        </p>
+                    </div>
+                ))}
             </div>
 
             {/* Quick Actions */}
-            <div className="flex flex-wrap gap-3">
-                <button
-                    onClick={() => setAddSheetOpen(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#edbc1d] to-yellow-500 hover:from-yellow-400 hover:to-yellow-500 text-black font-bold text-sm rounded-xl transition-all shadow-md shadow-[#edbc1d]/20"
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                <Link
+                    href="/admin/inventory"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#C5A572]/30 text-[#C5A572] text-xs font-semibold tracking-wide hover:bg-[#C5A572]/10 transition-colors whitespace-nowrap"
                 >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-3.5 h-3.5" />
                     Add Vehicle
-                </button>
+                </Link>
                 <Link
                     href="/admin/enquiries"
-                    className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 font-semibold text-sm rounded-xl transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-slate-400 text-xs font-semibold tracking-wide hover:bg-white/5 transition-colors whitespace-nowrap"
                 >
-                    <MessageSquare className="w-4 h-4" />
+                    <Users className="w-3.5 h-3.5" />
                     View Enquiries
-                    <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
                 </Link>
                 <Link
                     href="/admin/rentals"
-                    className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 font-semibold text-sm rounded-xl transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-slate-400 text-xs font-semibold tracking-wide hover:bg-white/5 transition-colors whitespace-nowrap"
                 >
-                    <KeyRound className="w-4 h-4" />
-                    View Rentals
-                    <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
+                    <FileText className="w-3.5 h-3.5" />
+                    Rental Pipeline
                 </Link>
             </div>
 
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                {/* Enquiries Trend */}
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-bold text-gray-300 uppercase tracking-[0.15em]">
-                            Enquiries — Feb 2026
-                        </h3>
-                        <span className="text-green-400 text-xs font-bold">+40% this week</span>
-                    </div>
-                    <div className="h-52">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={ENQUIRIES_TREND}>
-                                <defs>
-                                    <linearGradient id="enquiryGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#edbc1d" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#edbc1d" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                                <XAxis
-                                    dataKey="week"
-                                    tick={{ fill: "#6b7280", fontSize: 11 }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <YAxis
-                                    tick={{ fill: "#6b7280", fontSize: 11 }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                    allowDecimals={false}
-                                    width={24}
-                                />
-                                <Tooltip {...tooltipStyle} />
-                                <Area
-                                    type="monotone"
-                                    dataKey="count"
-                                    stroke="#edbc1d"
-                                    strokeWidth={2.5}
-                                    fill="url(#enquiryGrad)"
-                                    dot={{ fill: "#edbc1d", r: 4, strokeWidth: 0 }}
-                                    activeDot={{ r: 6, fill: "#edbc1d" }}
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-
-                {/* Inventory by Category (dynamic) */}
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-bold text-gray-300 uppercase tracking-[0.15em]">
-                            Inventory by Category
-                        </h3>
-                        <span className="text-gray-500 text-xs">{totalVehicles} total</span>
-                    </div>
-                    <div className="h-52">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={inventoryByCategory} barSize={28}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                                <XAxis
-                                    dataKey="category"
-                                    tick={{ fill: "#6b7280", fontSize: 11 }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <YAxis
-                                    tick={{ fill: "#6b7280", fontSize: 11 }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                    allowDecimals={false}
-                                    width={24}
-                                />
-                                <Tooltip {...tooltipStyle} />
-                                <Bar dataKey="count" fill="#edbc1d" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-            </div>
-
-            {/* Recent Enquiries */}
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
-                <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
-                    <h3 className="text-xs font-bold text-gray-300 uppercase tracking-[0.15em]">
-                        Recent Enquiries
-                    </h3>
-                    <Link href="/admin/enquiries" className="text-[#edbc1d] text-xs font-semibold hover:underline flex items-center gap-1">
-                        View All <ArrowRight className="w-3 h-3" />
-                    </Link>
-                </div>
-                <div className="divide-y divide-white/5">
-                    {MOCK_ENQUIRIES.slice(0, 5).map((enq) => (
-                        <div
-                            key={enq.id}
-                            className="flex items-center gap-4 px-5 py-3 hover:bg-white/[0.03] transition-colors"
+            {/* Two Column: Recent Vehicles + Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
+                {/* Recent Vehicles */}
+                <div className="lg:col-span-3">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-sm font-bold text-white tracking-widest uppercase">
+                            Recent Vehicles
+                        </h2>
+                        <Link
+                            href="/admin/inventory"
+                            className="text-[10px] text-[#C5A572] font-semibold tracking-wide flex items-center gap-1 hover:underline"
                         >
-                            <div className="w-9 h-9 rounded-full bg-[#edbc1d]/10 border border-[#edbc1d]/20 flex items-center justify-center shrink-0">
-                                <span className="text-[#edbc1d] text-sm font-bold">
-                                    {enq.customerName[0]}
-                                </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-white truncate">
-                                    {enq.customerName}
-                                </p>
-                                <p className="text-xs text-gray-400 truncate">{enq.vehicleName}</p>
-                            </div>
-                            <div className="flex items-center gap-3 shrink-0">
-                                <span className="text-[10px] text-gray-600 hidden sm:block">
-                                    {new Date(enq.createdAt).toLocaleDateString("en-GH", {
-                                        day: "numeric",
-                                        month: "short",
-                                    })}
-                                </span>
-                                <span
-                                    className={`text-[10px] font-bold px-2 py-1 rounded-full border ${
-                                        enq.status === "new"
-                                            ? "bg-green-500/15 text-green-400 border-green-500/20"
-                                            : enq.status === "contacted"
-                                            ? "bg-blue-500/15 text-blue-400 border-blue-500/20"
-                                            : "bg-gray-500/15 text-gray-500 border-gray-500/20"
-                                    }`}
-                                >
-                                    {enq.status}
-                                </span>
-                            </div>
+                            View All <ArrowRight className="w-3 h-3" />
+                        </Link>
+                    </div>
+
+                    {recentVehicles.length === 0 ? (
+                        <div className="p-8 text-center rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                            <p className="text-slate-500 text-sm">No vehicles yet. Add your first vehicle!</p>
+                            <Link
+                                href="/admin/inventory"
+                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-full bg-[#C5A572]/10 text-[#C5A572] text-xs font-semibold hover:bg-[#C5A572]/20 transition-colors"
+                            >
+                                <Plus className="w-3.5 h-3.5" />
+                                Add Vehicle
+                            </Link>
                         </div>
-                    ))}
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {recentVehicles.map(vehicle => (
+                                <div
+                                    key={vehicle.id}
+                                    className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-white/10 transition-all duration-300"
+                                >
+                                    <div className="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h3 className="text-sm font-semibold text-white">
+                                                {vehicle.make} {vehicle.model}
+                                            </h3>
+                                            <p className="text-[10px] text-slate-500 mt-0.5">
+                                                {vehicle.year} · {vehicle.category.toUpperCase()}
+                                            </p>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${vehicle.category === "sale"
+                                            ? "bg-[#C5A572]/15 text-[#C5A572]"
+                                            : "bg-blue-400/15 text-blue-400"
+                                            }`}>
+                                            {vehicle.category === "sale" ? "For Sale" : "Rental"}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 mt-3 text-[11px] text-slate-400 admin-data-number">
+                                        {vehicle.daily_rate && (
+                                            <span>GH₵{vehicle.daily_rate}/day</span>
+                                        )}
+                                        {vehicle.mileage != null && (
+                                            <span>{vehicle.mileage.toLocaleString()} km</span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Activity Stream */}
+                <div className="lg:col-span-2">
+                    <h2 className="text-sm font-bold text-white tracking-widest uppercase mb-4 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Live Activity
+                    </h2>
+
+                    <div className="space-y-2">
+                        {activities.length === 0 ? (
+                            <div className="p-6 text-center rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                                <p className="text-slate-500 text-xs">No activity yet</p>
+                            </div>
+                        ) : (
+                            activities.map((activity, i) => (
+                                <div
+                                    key={i}
+                                    className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-sm"
+                                >
+                                    <p className="text-slate-300 text-xs leading-relaxed">
+                                        {activity.text}
+                                    </p>
+                                    <p className="text-[10px] text-slate-600 mt-1 admin-data-number">
+                                        {activity.time ? new Date(activity.time).toLocaleDateString("en-GB", {
+                                            day: "numeric", month: "short", year: "numeric",
+                                        }) : ""}
+                                    </p>
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
-
-            {/* Recent Rentals */}
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
-                <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
-                    <h3 className="text-xs font-bold text-gray-300 uppercase tracking-[0.15em]">
-                        Rental Applications
-                    </h3>
-                    <Link href="/admin/rentals" className="text-[#edbc1d] text-xs font-semibold hover:underline flex items-center gap-1">
-                        View All <ArrowRight className="w-3 h-3" />
-                    </Link>
-                </div>
-                <div className="divide-y divide-white/5">
-                    {MOCK_RENTAL_APPS.slice(0, 4).map((app) => (
-                        <div
-                            key={app.id}
-                            className="flex items-center gap-4 px-5 py-3 hover:bg-white/[0.03] transition-colors"
-                        >
-                            <div className="w-9 h-9 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
-                                <span className="text-purple-300 text-sm font-bold">
-                                    {app.customerName[0]}
-                                </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-white truncate">
-                                    {app.customerName}
-                                </p>
-                                <p className="text-xs text-gray-400 truncate">
-                                    {app.vehicleName} · {app.totalDays}d
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-3 shrink-0">
-                                <span className="text-[#edbc1d] text-xs font-bold hidden sm:block">
-                                    GH₵ {(app.totalDays * app.dailyRate).toLocaleString()}
-                                </span>
-                                <span
-                                    className={`text-[10px] font-bold px-2 py-1 rounded-full border capitalize ${
-                                        app.status === "approved"
-                                            ? "bg-green-500/15 text-green-400 border-green-500/20"
-                                            : app.status === "pending"
-                                            ? "bg-amber-500/15 text-amber-400 border-amber-500/20"
-                                            : app.status === "reviewing"
-                                            ? "bg-blue-500/15 text-blue-400 border-blue-500/20"
-                                            : "bg-red-500/15 text-red-400 border-red-500/20"
-                                    }`}
-                                >
-                                    {app.status}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Add Vehicle Sheet (from quick actions) */}
-            <VehicleFormSheet
-                open={addSheetOpen}
-                onOpenChange={setAddSheetOpen}
-                mode="add"
-                onSave={handleAddVehicle}
-            />
         </div>
     )
 }

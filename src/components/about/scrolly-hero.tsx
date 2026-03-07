@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef } from "react"
-import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
 import { Shield, Car, Ship, Crown, Key } from "lucide-react"
 
@@ -11,10 +11,6 @@ export function ScrollyHero() {
         target: containerRef,
         offset: ["start start", "end end"]
     })
-
-    // -- PHYSICS ENGINE: HEAVY GLASS --
-    // Tuned for responsiveness: lighter mass for quicker reaction
-    const physicsTransition = { type: "spring", stiffness: 250, damping: 30, mass: 1.0 }
 
     // -- PHASE 1 & 2: MAGNETIC PULL (0% -> 70%) --
     // Diamond Layout Targets with "Heavy" interpolation
@@ -38,7 +34,7 @@ export function ScrollyHero() {
     // -- PHASE 3: THE SNAP (60% -> 70%) --
     // A tight, microscopic bounce to simulate heavy mass colliding
     const emblemScale = useTransform(scrollYProgress, [0.5, 0.55, 0.65], [1, 1.15, 1])
-    const emblemGlow = useTransform(scrollYProgress, [0.5, 0.65], ["drop-shadow(0 0 0px var(--gold))", "drop-shadow(0 0 30px var(--gold))"])
+    const emblemGlowOpacity = useTransform(scrollYProgress, [0.5, 0.65], [0, 1])
 
     // -- PHASE 4: CLEAN EXIT (80% -> 90%) --
     // CRITICAL FIX: Accelerate fade out to prevent collision with Firm Intro.
@@ -70,10 +66,14 @@ export function ScrollyHero() {
 
                     {/* Central Emblem - ELEVATED Z-INDEX (30) to sit ABOVE cards */}
                     <motion.div
-                        style={{ scale: emblemScale, filter: emblemGlow }}
+                        style={{ scale: emblemScale, willChange: "transform" }}
                         className="absolute z-30 flex flex-col items-center justify-center"
                     >
-                        <div className="w-40 h-40 rounded-full border-2 border-primary/30 flex items-center justify-center bg-background-dark/80 backdrop-blur-md">
+                        <div className="w-40 h-40 rounded-full border-2 border-primary/30 flex items-center justify-center bg-background-dark/80 backdrop-blur-md relative">
+                            <motion.div
+                                style={{ opacity: emblemGlowOpacity }}
+                                className="absolute inset-0 rounded-full shadow-[0_0_30px_var(--color-primary)] pointer-events-none"
+                            />
                             <Crown className="w-20 h-20 text-primary" strokeWidth={1} />
                         </div>
                         <h1 className="mt-8 text-6xl font-display font-bold text-white tracking-widest uppercase text-center relative">
@@ -102,7 +102,7 @@ export function ScrollyHero() {
 
                     {/* BOTTOM: Rentals */}
                     <motion.div style={{ y: rentalsY, opacity: cardsOpacity }} className="absolute z-20">
-                        <GlassCard title="Rentals" subtitle="Luxury On Demand" icon={Key} image="https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=2070&auto=format&fit=crop" />
+                        <GlassCard title="Rentals" subtitle="Luxury On Demand" icon={Key} image="https://lh3.googleusercontent.com/aida-public/AB6AXuBJxBjUl8Dg66D9DsMBxQrbPtPNL3HCfRyEyHXzyiJamEEmOnp_ms0ZXugo4P1FXA8K1LraWJlOrzyu1GcE7zSX9z6_IDqtBN51ggdGguFp73SbFyyuJzE9NK8RggCRadfCM-UoAu0A1gzEtJST8OYGYZSwbo8acJJX6Wg9EsaYrmj0VbzG_Bf9Am1KrlJRXY-iU5o0TnTPJTjn1zefn4oIK25m0Xv-pqqvZ-1_V8YCbL7h_72AmyZGrjLLNEnCmHUe-0cxolX1sK8O" />
                     </motion.div>
 
                 </motion.div>

@@ -1,24 +1,24 @@
-import type { Metadata } from "next"
-import { TransportHero } from "@/components/transport/hero"
-import { ValuePropSection } from "@/components/transport/value-prop"
-import { FleetShowcaseSection } from "@/components/transport/fleet-showcase"
-import { StatsSection } from "@/components/transport/stats"
-import { BookingCTASection } from "@/components/transport/booking-cta"
+import type { Metadata } from "next";
+import { TransportHero } from "@/components/transport/hero";
+import { StatsSection } from "@/components/transport/stats";
+import { FleetShowcaseSection } from "@/components/transport/fleet-showcase";
+import { ValuePropSection } from "@/components/transport/value-prop";
+import { BookingCTASection } from "@/components/transport/booking-cta";
 
 export const metadata: Metadata = {
-    title: "Premium Transport Services",
+    title: "Transport Services | Airport Transfers & Corporate Shuttles | Royal Dynamite",
     description:
-        "Experience Ghana's finest private transport — airport transfers, corporate shuttles, and VIP event transport with professional chauffeurs and tracked vehicles.",
-}
+        "Professional airport transfers, corporate shuttle services, and group event transport across Ghana. Trained drivers, tracked vehicles, and fixed pricing.",
+};
 
 export default function TransportPage() {
     return (
-        <main>
+        <div className="min-h-screen bg-[#0a192f]">
             <TransportHero />
             <ValuePropSection />
             <FleetShowcaseSection />
             <StatsSection />
             <BookingCTASection />
-        </main>
-    )
+        </div>
+    );
 }

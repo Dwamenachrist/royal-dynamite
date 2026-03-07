@@ -1,9 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useParams } from "next/navigation"
 import Link from "next/link"
-import { getVehicleById } from "@/lib/mock-data"
+import { createBrowserClient } from "@supabase/ssr"
+import Image from "next/image"
+import { dbVehicleToVehicle } from "@/lib/utils/mapVehicle"
 import { generateWhatsAppLink, SITE_CONFIG } from "@/lib/constants"
 import { Button } from "@/components/ui/button"
 import {
@@ -36,20 +38,54 @@ interface FormErrors {
 }
 
 export default function EnquirePage() {
-    const router = useRouter()
     const params = useParams()
     const id = params.id as string
-    const vehicle = getVehicleById(id)
+
+    const [vehicle, setVehicle] = useState<ReturnType<typeof dbVehicleToVehicle> | null>(null)
+    const [loading, setLoading] = useState(true)
+
+    React.useEffect(() => {
+        async function fetchVehicle() {
+            const supabase = createBrowserClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+            )
+            const { data } = await supabase.from("vehicles").select("*").eq("id", id).single()
+            if (data) {
+                setVehicle(dbVehicleToVehicle(data))
+            }
+            setLoading(false)
+        }
+        fetchVehicle()
+    }, [id])
 
     const [formData, setFormData] = useState<FormData>({
         fullName: "",
         phone: "",
         email: "",
-        message: `I'm interested in the ${vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : "vehicle"}. Please share availability and any additional details.`,
+        message: "",
     })
     const [errors, setErrors] = useState<FormErrors>({})
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSubmitted, setIsSubmitted] = useState(false)
+
+    // Update message when vehicle loads
+    React.useEffect(() => {
+        if (vehicle) {
+            setFormData(prev => ({
+                ...prev,
+                message: prev.message || `I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Please share availability and any additional details.`,
+            }))
+        }
+    }, [vehicle])
+
+    if (loading) {
+        return (
+            <div className="bg-[#0F172A] text-white min-h-screen flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-[#edbc1d]/30 border-t-[#edbc1d] rounded-full animate-spin" />
+            </div>
+        )
+    }
 
     if (!vehicle) {
         return (
@@ -232,10 +268,13 @@ export default function EnquirePage() {
                                 <div className="bg-[#112240]/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
                                     {/* Vehicle Image */}
                                     <div className="relative aspect-[16/10] overflow-hidden">
-                                        <img
+                                        <Image
                                             src={vehicle.images?.[0] || "/placeholder.svg"}
                                             alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                                            className="w-full h-full object-cover"
+                                            fill
+                                            priority
+                                            className="object-cover"
+                                            sizes="(max-width: 1024px) 100vw, 40vw"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-[#112240] via-transparent to-transparent" />
                                     </div>

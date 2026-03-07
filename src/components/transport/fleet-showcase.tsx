@@ -1,8 +1,10 @@
+"use client"
+
 import React from "react"
 import Image from "next/image"
 import { Users, Briefcase } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { generateWhatsAppLink } from "@/lib/constants"
+import { motion } from "framer-motion"
 
 interface FleetClass {
     title: string
@@ -22,7 +24,7 @@ const fleetClasses: FleetClass[] = [
         passengers: 3,
         luggage: 2,
         description: "Perfect for airport transfers and business meetings. Features leather interior, climate control, and privacy glass.",
-        popular: false
+        popular: false,
     },
     {
         title: "First Class SUV",
@@ -31,7 +33,7 @@ const fleetClasses: FleetClass[] = [
         passengers: 4,
         luggage: 4,
         description: "Elevated comfort for VIPs. Spacious interior, Wi-Fi connectivity, and commanding road presence.",
-        popular: true
+        popular: true,
     },
     {
         title: "Executive Group",
@@ -40,35 +42,69 @@ const fleetClasses: FleetClass[] = [
         passengers: 7,
         luggage: 10,
         description: "Ideal for delegations and teams. Conference seating arrangement options and ample luggage space.",
-        popular: false
-    }
+        popular: false,
+    },
 ]
+
+const containerVariants = {
+    hidden: {},
+    visible: {
+        transition: { staggerChildren: 0.1, delayChildren: 0.05 },
+    },
+}
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 32, filter: "blur(6px)" },
+    visible: {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        transition: { type: "spring" as const, stiffness: 90, damping: 20 },
+    },
+}
 
 export function FleetShowcaseSection() {
     return (
         <section className="py-20 bg-background-dark relative overflow-hidden" id="fleet">
-            {/* Background decorative elements */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full filter blur-[100px] pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full filter blur-[80px] pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full filter blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full filter blur-[80px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center mb-16">
-                    <h2 className="text-primary text-sm font-bold tracking-[0.2em] uppercase mb-3">The Collection</h2>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ type: "spring", stiffness: 90, damping: 20 }}
+                    className="text-center mb-16"
+                >
+                    <h2 className="text-[#D4AF37] text-sm font-bold tracking-[0.2em] uppercase mb-3">The Collection</h2>
                     <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight">CHOOSE YOUR CLASS</h3>
-                    <div className="w-24 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mt-6"></div>
-                </div>
+                    <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mt-6" />
+                </motion.div>
 
-                {/* Desktop: 3-col grid, Mobile: horizontal snap scroll */}
-                <div className="hidden lg:grid lg:grid-cols-3 gap-8">
-                    {fleetClasses.map((item, index) => (
-                        <FleetClassCard key={index} item={item} />
+                {/* Desktop: asymmetric grid — popular card elevated */}
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-50px" }}
+                    className="hidden lg:grid lg:grid-cols-[1fr_1.08fr_1fr] gap-6 items-start"
+                >
+                    {fleetClasses.map((item) => (
+                        <motion.div
+                            key={item.title}
+                            variants={cardVariants}
+                            style={item.popular ? { marginTop: "-1.5rem" } : {}}
+                        >
+                            <FleetClassCard item={item} />
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
 
-                {/* Mobile: Horizontal snap scroll */}
+                {/* Mobile: horizontal snap scroll */}
                 <div className="flex lg:hidden overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-2 px-2 no-scrollbar">
-                    {fleetClasses.map((item, index) => (
-                        <div key={index} className="snap-center shrink-0 w-[85vw] max-w-[340px]">
+                    {fleetClasses.map((item) => (
+                        <div key={item.title} className="snap-center shrink-0 w-[88vw] max-w-[360px]">
                             <FleetClassCard item={item} />
                         </div>
                     ))}
@@ -80,7 +116,11 @@ export function FleetShowcaseSection() {
 
 function FleetClassCard({ item }: { item: FleetClass }) {
     return (
-        <div className={`glass-panel border ${item.popular ? 'border-primary/40' : 'border-glass-stroke'} rounded-lg overflow-hidden group flex flex-col h-full relative transition-colors`}>
+        <motion.div
+            whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 20 } }}
+            whileTap={{ scale: 0.98 }}
+            className={`glass-panel border ${item.popular ? "border-primary/40" : "border-glass-stroke"} rounded-2xl overflow-hidden group flex flex-col h-full relative`}
+        >
             {item.popular && (
                 <div className="absolute top-4 right-4 z-20 bg-primary text-background-dark text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                     MOST POPULAR
@@ -91,18 +131,22 @@ function FleetClassCard({ item }: { item: FleetClass }) {
                     src={item.image}
                     alt={`${item.title} - ${item.type}`}
                     fill
-                    sizes="(max-width: 1024px) 85vw, 33vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 1024px) 85vw, 34vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background-dark/90 to-transparent opacity-80"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-background-dark/80 via-background-dark/20 to-transparent" />
                 <div className="absolute bottom-4 left-4">
-                    <span className="px-2 py-1 bg-primary text-background-dark text-xs font-bold rounded uppercase">{item.type}</span>
+                    <span className="px-2 py-1 bg-primary text-background-dark text-xs font-bold rounded uppercase">
+                        {item.type}
+                    </span>
                 </div>
             </div>
 
             <div className="p-6 flex flex-col flex-grow">
                 <div className="flex justify-between items-start mb-4">
-                    <h4 className={`text-xl font-bold ${item.popular ? 'text-primary' : 'text-white'}`}>{item.title}</h4>
+                    <h4 className={`text-xl font-bold ${item.popular ? "text-primary" : "text-white"}`}>
+                        {item.title}
+                    </h4>
                     <div className="flex gap-2 text-gray-400 text-xs">
                         <span className="flex items-center gap-1"><Users className="w-4 h-4" /> {item.passengers}</span>
                         <span className="flex items-center gap-1"><Briefcase className="w-4 h-4" /> {item.luggage}</span>
@@ -111,22 +155,21 @@ function FleetClassCard({ item }: { item: FleetClass }) {
 
                 <p className="text-gray-400 text-sm mb-6 flex-grow">{item.description}</p>
 
-                <Button
-                    className={`w-full py-6 text-sm font-bold tracking-widest uppercase transition-all duration-300 ${item.popular
-                        ? 'btn-primary hover:bg-white hover:text-background-dark'
-                        : 'btn-secondary'
+                <a
+                    href={generateWhatsAppLink(`Hello, I'd like to book the ${item.title} (${item.type}) for transport.`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`w-full min-h-[52px] flex items-center justify-center gap-2
+                        text-sm font-bold tracking-widest uppercase rounded-xl
+                        transition-all duration-300
+                        ${item.popular
+                            ? "bg-gradient-to-r from-[#D4AF37] via-[#e8c84a] to-[#D4AF37] text-[#0a1628] shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_28px_rgba(212,175,55,0.5)]"
+                            : "border-2 border-white/20 text-white hover:border-[#D4AF37]/50 hover:bg-white/5"
                         }`}
-                    asChild
                 >
-                    <a
-                        href={generateWhatsAppLink(`Hello, I'd like to book the ${item.title} (${item.type}) for transport.`)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Request This Class
-                    </a>
-                </Button>
+                    Request This Class
+                </a>
             </div>
-        </div>
+        </motion.div>
     )
 }

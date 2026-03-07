@@ -16,9 +16,9 @@ export function VehicleGallery({ images, className }: VehicleGalleryProps) {
 
     // Fade in on first load and when switching images
     useEffect(() => {
-        setIsImageVisible(false)
-        const t = setTimeout(() => setIsImageVisible(true), 50)
-        return () => clearTimeout(t)
+        const t1 = setTimeout(() => setIsImageVisible(false), 0)
+        const t2 = setTimeout(() => setIsImageVisible(true), 50)
+        return () => { clearTimeout(t1); clearTimeout(t2) }
     }, [activeImage])
 
     function handleThumbnailClick(img: string) {
@@ -29,7 +29,7 @@ export function VehicleGallery({ images, className }: VehicleGalleryProps) {
     return (
         <div className={cn("space-y-4", className)}>
             {/* Main Image Stage */}
-            <div className="relative aspect-video w-full rounded-xl overflow-hidden group border border-white/5 shadow-2xl shadow-black/50 bg-[#0d1b2e]">
+            <div className="sticky top-0 -z-10 -mx-4 h-[55dvh] rounded-none sm:relative sm:h-auto sm:aspect-video sm:w-full sm:rounded-xl sm:z-auto sm:mx-0 overflow-hidden group border-b sm:border border-white/5 shadow-2xl shadow-black/50 bg-[#0d1b2e]">
                 <Image
                     src={activeImage}
                     alt="Vehicle main view"
@@ -57,13 +57,13 @@ export function VehicleGallery({ images, className }: VehicleGalleryProps) {
             </div>
 
             {/* Thumbnails Strip */}
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory px-4 -mx-4 sm:mx-0 sm:px-0 mt-8 sm:mt-0 relative z-20 bg-[#0F172A] sm:bg-transparent">
                 {images.map((img, idx) => (
                     <button
                         key={idx}
                         onClick={() => handleThumbnailClick(img)}
                         className={cn(
-                            "flex-shrink-0 w-32 aspect-[16/10] rounded-lg overflow-hidden relative transition-all group",
+                            "flex-shrink-0 w-32 aspect-[16/10] rounded-lg overflow-hidden relative transition-all group snap-center",
                             activeImage === img ? "border-2 border-[#edbc1d]" : "border border-white/10 hover:border-white/40"
                         )}
                     >

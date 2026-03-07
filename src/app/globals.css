@@ -450,6 +450,19 @@
   border-color: rgba(212, 175, 55, 0.25);
 }
 
+/* Touch active feedback — hover doesn't fire on touch devices */
+@media (hover: none) {
+  .dark-glass:active {
+    transform: scale(0.97);
+    border-color: rgba(212, 175, 55, 0.2);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .dark-glass-feature:active {
+    transform: scale(0.99);
+    transition: transform 0.15s ease;
+  }
+}
+
 .dark-glass-feature {
   background: rgba(15, 34, 61, 0.3);
   backdrop-filter: blur(8px) saturate(1.1);

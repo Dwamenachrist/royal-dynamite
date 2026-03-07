@@ -1,61 +1,13 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import {
-    Phone,
-    Mail,
-    MapPin,
-    Clock,
-    Send,
-    CheckCircle,
-    Loader2,
-    MessageCircle,
-    ArrowRight,
-    Sparkles,
-    Car,
-    KeyRound,
-    Shield,
-    Ship,
+    MapPin, Phone, Mail, MessageCircle, ArrowRight, Car, KeyRound, Shield, Ship, CheckCircle, Loader2, Send, Sparkles
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SITE_CONFIG, generateWhatsAppLink } from "@/lib/constants";
-
-/* ─── Types ─── */
-interface FormErrors {
-    name?: string;
-    email?: string;
-    phone?: string;
-    subject?: string;
-    message?: string;
-}
-
-interface FormData {
-    name: string;
-    email: string;
-    phone: string;
-    subject: string;
-    message: string;
-}
-
-/* ─── Validation helpers ─── */
-function validateEmail(email: string): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function validateField(field: keyof FormData, value: string): string | undefined {
-    switch (field) {
-        case "name":
-            return value.trim().length < 2 ? "Please enter your full name" : undefined;
-        case "email":
-            return !validateEmail(value) ? "Please enter a valid email" : undefined;
-        case "subject":
-            return !value ? "Please select a service" : undefined;
-        case "message":
-            return value.trim().length < 10 ? "Please share a bit more detail" : undefined;
-        default:
-            return undefined;
-    }
-}
+import MobileContactView from "@/components/contact/MobileContactView";
+import { useContactForm } from "@/hooks/useContactForm";
+import { NewsletterCTA } from "@/components/ui/newsletter-cta";
 
 /* ─── Service Selector Cards ─── */
 const SERVICE_OPTIONS = [
@@ -108,95 +60,21 @@ const VIP_CHANNELS = [
    CONTACT CONCIERGE PAGE
    ═══════════════════════════════════════════ */
 export default function ContactPage() {
-    const [formData, setFormData] = useState<FormData>({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-    });
-    const [errors, setErrors] = useState<FormErrors>({});
-    const [touched, setTouched] = useState<Set<keyof FormData>>(new Set());
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
-
-    const handleChange = useCallback((field: keyof FormData, value: string) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-        setErrors((prev) => {
-            if (prev[field]) {
-                const next = { ...prev };
-                delete next[field];
-                return next;
-            }
-            return prev;
-        });
-    }, []);
-
-    const handleBlur = useCallback(
-        (field: keyof FormData) => {
-            setTouched((prev) => new Set(prev).add(field));
-            const error = validateField(field, formData[field]);
-            setErrors((prev) => {
-                if (error) return { ...prev, [field]: error };
-                const next = { ...prev };
-                delete next[field];
-                return next;
-            });
-        },
-        [formData]
-    );
-
-    const handleServiceSelect = useCallback((value: string) => {
-        setFormData((prev) => ({ ...prev, subject: value }));
-        setTouched((prev) => new Set(prev).add("subject"));
-        setErrors((prev) => {
-            const next = { ...prev };
-            delete next.subject;
-            return next;
-        });
-    }, []);
-
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        const newErrors: FormErrors = {};
-        (["name", "email", "subject", "message"] as const).forEach((field) => {
-            const error = validateField(field, formData[field]);
-            if (error) newErrors[field] = error;
-        });
-
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            setTouched(new Set(["name", "email", "subject", "message"]));
-            return;
-        }
-
-        setIsSubmitting(true);
-        const serviceLabel = SERVICE_OPTIONS.find(s => s.value === formData.subject)?.label ?? formData.subject;
-        const waMessage = [
-            "🔔 New Website Enquiry",
-            "",
-            `Name: ${formData.name}`,
-            `Email: ${formData.email}`,
-            formData.phone ? `Phone: ${formData.phone}` : null,
-            `Service: ${serviceLabel}`,
-            "",
-            "Message:",
-            formData.message,
-            "",
-            "— Sent from RoyalDynamite.com",
-        ].filter(Boolean).join("\n");
-        window.open(generateWhatsAppLink(waMessage), "_blank", "noopener,noreferrer");
-        setIsSubmitting(false);
-        setIsSubmitted(true);
-    }
-
-    function getInputClass(field: keyof FormData): string {
-        const base = "concierge-input";
-        if (!touched.has(field)) return base;
-        if (errors[field]) return `${base} input-error`;
-        if (formData[field].trim().length > 0) return `${base} input-success`;
-        return base;
-    }
+    const {
+        formData,
+        errors,
+        touched,
+        isSubmitting,
+        isSubmitted,
+        isMapActive,
+        setIsMapActive,
+        handleChange,
+        handleBlur,
+        handleServiceSelect,
+        handleSubmit,
+        resetForm,
+        getInputClass
+    } = useContactForm();
 
     return (
         <div className="min-h-screen">
@@ -209,9 +87,29 @@ export default function ContactPage() {
                 variant="full"
             />
 
+            {/* Mobile View */}
+            <div className="block lg:hidden">
+                <MobileContactView
+                    formData={formData}
+                    errors={errors}
+                    touched={touched}
+                    isSubmitting={isSubmitting}
+                    isSubmitted={isSubmitted}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    handleServiceSelect={handleServiceSelect}
+                    handleSubmit={handleSubmit}
+                    getInputClass={getInputClass}
+                    setIsMapActive={setIsMapActive}
+                    isMapActive={isMapActive}
+                    resetForm={resetForm}
+                />
+            </div>
+
+            {/* Desktop View */}
             {/* ═══════ CONCIERGE SECTION ═══════ */}
             <section
-                className="relative py-20 lg:py-28"
+                className="hidden lg:block relative py-20 lg:py-28"
                 style={{
                     background:
                         "linear-gradient(180deg, #0F172A 0%, #0d1527 40%, #0F172A 100%)",
@@ -303,12 +201,7 @@ export default function ContactPage() {
                                             will be in touch shortly.
                                         </p>
                                         <button
-                                            onClick={() => {
-                                                setIsSubmitted(false);
-                                                setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-                                                setTouched(new Set());
-                                                setErrors({});
-                                            }}
+                                            onClick={resetForm}
                                             className="mt-6 text-sm text-rd-gold/70 hover:text-rd-gold transition-colors duration-300 underline underline-offset-4"
                                         >
                                             Submit another request
@@ -577,14 +470,14 @@ export default function ContactPage() {
                         >
                             {/* Map iframe */}
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15881.54736340478!2d-0.163333!3d5.716667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9ca81794025d%3A0x6b4c107e008479e0!2sAdenta%20Bulldog!5e0!3m2!1sen!2sgh!4v1715000000000!5m2!1sen!2sgh"
+                                src="https://maps.google.com/maps?q=Airport%20Bulldog,%20Accra,%20Ghana&t=&z=14&ie=UTF8&iwloc=&output=embed"
                                 width="100%"
                                 height="450"
                                 style={{ border: 0, display: "block" }}
                                 allowFullScreen
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
-                                title="Royal Dynamite Limited — Adenta - Bulldog, Accra"
+                                title="Royal Dynamite Limited — Airport Bulldog, Accra"
                             />
 
                             {/* Floating Location Pin */}
@@ -608,11 +501,11 @@ export default function ContactPage() {
                                 }}
                             >
                                 <div>
-                                    <h4 className="text-white font-bold mb-1">Adenta - Bulldog</h4>
+                                    <h4 className="text-white font-bold mb-1">Airport Bulldog</h4>
                                     <p className="text-slate-300 text-sm">Accra, Ghana</p>
                                 </div>
                                 <a
-                                    href="https://maps.google.com/?q=Adenta+Bulldog+Accra+Ghana"
+                                    href="https://maps.google.com/?q=Airport+Bulldog+Accra+Ghana"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-white text-slate-900 px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-[#D4AF37] hover:text-white transition-all duration-300 shrink-0"
@@ -627,7 +520,7 @@ export default function ContactPage() {
                             <div className="glass-panel p-6 rounded-2xl bg-white/5">
                                 <h4 className="text-xs font-bold uppercase text-[#D4AF37] mb-3 tracking-wider">Physical Address</h4>
                                 <p className="text-sm leading-relaxed text-slate-400">
-                                    Adenta - Bulldog<br />
+                                    Airport Bulldog<br />
                                     Accra, Ghana
                                 </p>
                             </div>
@@ -643,6 +536,8 @@ export default function ContactPage() {
                     </div>
                 </div>
             </section>
+
+            <NewsletterCTA />
         </div>
     );
 }

@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "25mb",
+    },
+  },
   images: {
+    loader: "custom",
+    loaderFile: "./src/lib/utils/imageLoader.ts",
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: "https",

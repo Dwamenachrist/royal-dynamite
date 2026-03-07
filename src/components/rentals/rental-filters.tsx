@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
@@ -10,8 +10,6 @@ export interface RentalFilters {
     transmission: string;
     fuelTypes: string[];
     priceRange: [number, number];
-    startDate?: string;
-    endDate?: string;
 }
 
 interface RentalFilterSidebarProps {
@@ -66,8 +64,6 @@ function FilterContent({ filters, onFiltersChange }: Omit<RentalFilterSidebarPro
             transmission: "all",
             fuelTypes: [],
             priceRange: [PRICE_MIN, PRICE_MAX],
-            startDate: "",
-            endDate: "",
         });
     };
 
@@ -75,38 +71,10 @@ function FilterContent({ filters, onFiltersChange }: Omit<RentalFilterSidebarPro
         filters.vehicleType !== "all" ||
         filters.transmission !== "all" ||
         filters.fuelTypes.length > 0 ||
-        filters.fuelTypes.length > 0 ||
-        filters.priceRange[1] !== PRICE_MAX ||
-        !!filters.startDate ||
-        !!filters.endDate;
+        filters.priceRange[1] !== PRICE_MAX;
 
     return (
         <div className="space-y-7">
-            {/* Date Range */}
-            <div>
-                <h3 className="text-sm font-semibold text-foreground mb-3 tracking-wide">Rental Period</h3>
-                <div className="space-y-3">
-                    <div className="space-y-1.5">
-                        <label className="text-xs text-muted-foreground font-medium ml-1">Pick-up Date</label>
-                        <input
-                            type="date"
-                            value={filters.startDate || ""}
-                            onChange={(e) => onFiltersChange({ ...filters, startDate: e.target.value })}
-                            className="w-full bg-transparent border border-border/60 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-rd-navy dark:focus:border-rd-gold transition-colors"
-                        />
-                    </div>
-                    <div className="space-y-1.5">
-                        <label className="text-xs text-muted-foreground font-medium ml-1">Return Date</label>
-                        <input
-                            type="date"
-                            value={filters.endDate || ""}
-                            onChange={(e) => onFiltersChange({ ...filters, endDate: e.target.value })}
-                            className="w-full bg-transparent border border-border/60 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-rd-navy dark:focus:border-rd-gold transition-colors"
-                        />
-                    </div>
-                </div>
-            </div>
-
             {/* Vehicle Type */}
             <div>
                 <h3 className="text-sm font-semibold text-foreground mb-3 tracking-wide">Vehicle Type</h3>
@@ -116,8 +84,8 @@ function FilterContent({ filters, onFiltersChange }: Omit<RentalFilterSidebarPro
                             key={t.value}
                             onClick={() => handleTypeChange(t.value)}
                             className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-300 border ${filters.vehicleType === t.value
-                                ? "bg-rd-navy text-white border-rd-navy shadow-sm"
-                                : "bg-transparent text-muted-foreground border-border hover:border-rd-navy/30 hover:text-foreground"
+                                    ? "bg-rd-navy text-white border-rd-navy shadow-sm"
+                                    : "bg-transparent text-muted-foreground border-border hover:border-rd-navy/30 hover:text-foreground"
                                 }`}
                         >
                             {t.label}
@@ -154,11 +122,12 @@ function FilterContent({ filters, onFiltersChange }: Omit<RentalFilterSidebarPro
                         <label
                             key={fuel}
                             className="flex items-center gap-2.5 cursor-pointer group"
+                            onClick={() => handleFuelToggle(fuel)}
                         >
                             <div
                                 className={`w-4 h-4 rounded border-[1.5px] flex items-center justify-center transition-all duration-200 ${filters.fuelTypes.includes(fuel)
-                                    ? "bg-rd-navy border-rd-navy"
-                                    : "border-border/80 group-hover:border-rd-navy/40"
+                                        ? "bg-rd-navy border-rd-navy"
+                                        : "border-border/80 group-hover:border-rd-navy/40"
                                     }`}
                             >
                                 {filters.fuelTypes.includes(fuel) && (
@@ -182,8 +151,8 @@ function FilterContent({ filters, onFiltersChange }: Omit<RentalFilterSidebarPro
                             key={t.value}
                             onClick={() => handleTransmissionChange(t.value)}
                             className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-300 border ${filters.transmission === t.value
-                                ? "bg-rd-navy text-white border-rd-navy shadow-sm"
-                                : "bg-transparent text-muted-foreground border-border hover:border-rd-navy/30 hover:text-foreground"
+                                    ? "bg-rd-navy text-white border-rd-navy shadow-sm"
+                                    : "bg-transparent text-muted-foreground border-border hover:border-rd-navy/30 hover:text-foreground"
                                 }`}
                         >
                             {t.label}
@@ -211,7 +180,7 @@ function FilterContent({ filters, onFiltersChange }: Omit<RentalFilterSidebarPro
 }
 
 // Desktop Sidebar
-export function RentalFilterSidebar({ filters, onFiltersChange, vehicleCount }: RentalFilterSidebarProps) {
+export function RentalFilterSidebar({ filters, onFiltersChange }: RentalFilterSidebarProps) {
     return (
         <aside className="hidden lg:block w-[260px] shrink-0">
             <div className="sticky top-24 bg-[#FAFAFA] dark:bg-zinc-900/60 border border-border/50 rounded-2xl p-6">
@@ -222,7 +191,7 @@ export function RentalFilterSidebar({ filters, onFiltersChange, vehicleCount }: 
 }
 
 // Mobile Filter Sheet
-export function MobileFilterSheet({ filters, onFiltersChange, vehicleCount }: RentalFilterSidebarProps) {
+export function MobileFilterSheet({ filters, onFiltersChange }: RentalFilterSidebarProps) {
     const [open, setOpen] = useState(false);
 
     return (

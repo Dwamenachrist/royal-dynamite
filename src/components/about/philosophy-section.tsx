@@ -3,7 +3,7 @@
 import React, { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
-import { ArrowRight, Scale, Leaf, Lightbulb, ShieldCheck, HeartHandshake, Users, BookOpen, Clock } from "lucide-react"
+import { Scale, Leaf, Lightbulb, ShieldCheck, HeartHandshake, Users, BookOpen, Clock } from "lucide-react"
 
 const philosophyConfig = [
     {
@@ -80,11 +80,15 @@ function PhilosophyItem({ item, index }: { item: any, index: number }) { // esli
                     {/* Text Content */}
                     <motion.div
                         style={{ y: yText }}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+                        transition={{ duration: 1.0, ease: [0.165, 0.84, 0.44, 1.0] as [number, number, number, number] }}
                         className={`relative z-10 order-2 ${isRight ? 'lg:order-2 lg:text-right' : 'lg:order-1 text-left'}`}
                     >
                         <div className={`flex items-center gap-4 mb-8 ${isRight ? 'justify-end flex-row-reverse' : ''} relative`}>
-                            <span className="h-[2px] w-12 bg-primary relative z-10"></span>
-                            <span className="text-primary tracking-widest text-sm uppercase font-bold relative z-10">{item.subtitle}</span>
+                            <span className="h-[2px] w-12 bg-rd-gold relative z-10"></span>
+                            <span className="text-rd-gold tracking-widest text-sm uppercase font-bold relative z-10">{item.subtitle}</span>
                         </div>
 
                         <h2 className="font-display text-4xl md:text-5xl mb-6 text-white font-bold leading-tight relative z-10">
@@ -98,7 +102,7 @@ function PhilosophyItem({ item, index }: { item: any, index: number }) { // esli
                         {/* Core Values Grid */}
                         {item.values && (
                             <div className="grid grid-cols-2 gap-4 mt-8 relative z-10">
-                                {item.values.map((val: any, idx: number) => (
+                                {item.values.map((val: { label: string; icon: React.ElementType }, idx: number) => (
                                     <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-rd-gold/30 transition-all duration-300">
                                         <div className="w-8 h-8 rounded-full bg-rd-gold/10 flex items-center justify-center shrink-0">
                                             <val.icon className="w-4 h-4 text-rd-gold" />
@@ -111,7 +115,13 @@ function PhilosophyItem({ item, index }: { item: any, index: number }) { // esli
                     </motion.div>
 
                     {/* Image Window */}
-                    <div className={`order-1 ${isRight ? 'lg:order-1' : 'lg:order-2'} relative`}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 60 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+                        transition={{ duration: 1.2, ease: [0.165, 0.84, 0.44, 1.0] as [number, number, number, number] }}
+                        className={`order-1 ${isRight ? 'lg:order-1' : 'lg:order-2'} relative`}
+                    >
                         <div className="relative h-[400px] md:h-[600px] w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl group-hover:border-primary/30 transition-colors duration-500">
                             <motion.div style={{ scale, y: yBg }} className="absolute inset-0 -top-[20%] h-[140%] w-full">
                                 <Image
@@ -134,7 +144,7 @@ function PhilosophyItem({ item, index }: { item: any, index: number }) { // esli
                             {/* Decorative Corner */}
                             <div className={`absolute bottom-6 w-12 h-12 border-b-2 border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${isRight ? 'left-6 border-l-2' : 'right-6 border-r-2'}`}></div>
                         </div>
-                    </div>
+                    </motion.div>
 
                 </div>
             </div>

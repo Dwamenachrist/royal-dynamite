@@ -138,6 +138,7 @@ export function RentalReviews({ reviews, className }: RentalReviewsProps) {
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
                                         {review.avatar ? (
+                                            /* eslint-disable-next-line @next/next/no-img-element */
                                             <img src={review.avatar} alt={review.author} className="w-full h-full object-cover" />
                                         ) : (
                                             <User className="w-4 h-4 text-gray-500" />

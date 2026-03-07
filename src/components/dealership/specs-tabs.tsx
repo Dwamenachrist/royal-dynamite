@@ -2,9 +2,11 @@ import React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 
+import { Vehicle } from "@/types"
+
 interface SpecsTabsProps {
     className?: string
-    vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    vehicle: Vehicle
 }
 
 export function SpecsTabs({ className, vehicle }: SpecsTabsProps) {
@@ -45,15 +47,14 @@ export function SpecsTabs({ className, vehicle }: SpecsTabsProps) {
                         <div className="prose prose-invert max-w-none text-gray-300 font-light">
                             <p>{vehicle.description}</p>
                             <p className="mt-4">
-                                Under the hood lies a formidable {vehicle.engineSize} engine delivering effortless power,
-                                while the interior is a sanctuary of technology and comfort.
+                                {vehicle.engineSize ? `Under the hood lies a formidable ${vehicle.engineSize} engine delivering effortless power, while the interior is a sanctuary of technology and comfort.` : 'Experience effortless power and a sanctuary of technology and comfort.'}
                             </p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                            <SpecItem label="Exterior Color" value={vehicle.color} />
-                            <SpecItem label="Interior Trim" value="Perlino Leather" />
-                            <SpecItem label="Drive Type" value={vehicle.drivetrain} />
-                            <SpecItem label="VIN" value={vehicle.vin} />
+                            <SpecItem label="Exterior Color" value={vehicle.color || "N/A"} />
+                            <SpecItem label="Interior Trim" value="Premium Leather" />
+                            <SpecItem label="Drive Type" value={vehicle.drivetrain || "N/A"} />
+                            <SpecItem label="VIN" value={vehicle.vin || "Available on request"} />
                         </div>
                     </TabsContent>
 

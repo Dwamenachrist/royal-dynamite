@@ -46,7 +46,13 @@ export function LeadershipSection() {
     )
 }
 
-function TeamCard({ member, index }: { member: any, index: number }) { // eslint-disable-line @typescript-eslint/no-explicit-any
+interface TeamMember {
+    name: string;
+    role: string;
+    image: string;
+}
+
+function TeamCard({ member, index }: { member: TeamMember, index: number }) {
     const ref = useRef(null)
     const isInView = useInView(ref, { once: true, margin: "-50px" })
 

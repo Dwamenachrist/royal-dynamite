@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 interface PremiumSliderProps {
@@ -32,7 +32,7 @@ export function PremiumSlider({
     const range = useRef<HTMLDivElement>(null);
 
     // Convert to percentage
-    const getPercent = (value: number) => Math.round(((value - min) / (max - min)) * 100);
+    const getPercent = useCallback((value: number) => Math.round(((value - min) / (max - min)) * 100), [min, max]);
 
     // Update visual track width/pos based on INTERNAL state
     useEffect(() => {
@@ -58,13 +58,12 @@ export function PremiumSlider({
     // We use a flag or check to ensure we don't overwrite dragging state if parent updates unexpectedly
     useEffect(() => {
         if (value[0] !== minValRef.current || value[1] !== maxValRef.current) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMinVal(value[0]);
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaxVal(value[1]);
             minValRef.current = value[0];
             maxValRef.current = value[1];
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value[0], value[1]]);
 
     const handleMinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,7 +134,8 @@ export function PremiumSlider({
                     const value = min + ((max - min) * (percentage / 100));
 
                     let label = "0";
-                    if (value >= 1000) label = `${(value / 1000).toFixed(0)}k`;
+                    if (formatLabel) label = formatLabel(value);
+                    else if (value >= 1000) label = `${(value / 1000).toFixed(0)}k`;
                     else if (value > 0) label = value.toFixed(0);
 
                     return (

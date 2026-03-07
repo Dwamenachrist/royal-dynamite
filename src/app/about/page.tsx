@@ -1,13 +1,18 @@
-import React from "react"
-import { ScrollyHero } from "@/components/about/scrolly-hero"
-import { AboutHero } from "@/components/about/about-hero"
-import { FirmIntro } from "@/components/about/firm-intro"
-import { PhilosophySection } from "@/components/about/philosophy-section"
-import { StatsBar } from "@/components/about/stats-bar"
-import { LeadershipGrid } from "@/components/about/leadership-grid"
-import { CTASection } from "@/components/about/cta-section"
+import type { Metadata } from "next";
+import { ScrollyHero } from "@/components/about/scrolly-hero";
+import { MobileDiamondHero } from "@/components/about/mobile-diamond-hero";
+import { FirmIntro } from "@/components/about/firm-intro";
+import { PhilosophySection } from "@/components/about/philosophy-section";
+import { StatsBar } from "@/components/about/stats-bar";
+import { LeadershipGrid } from "@/components/about/leadership-grid";
+import { MajorClients } from "@/components/about/major-clients";
+import { CTASection } from "@/components/about/cta-section";
 
-import { MajorClients } from "@/components/about/major-clients"
+export const metadata: Metadata = {
+    title: "About Us | Royal Dynamite Limited — Excellence in Motion",
+    description:
+        "Learn about Royal Dynamite Limited — Ghana's trusted vehicle and logistics company since 2015. Incorporated, transparent, and built on trust.",
+};
 
 export default function AboutPage() {
     return (
@@ -15,10 +20,8 @@ export default function AboutPage() {
             {/* Desktop Scrollytelling Hero (Samurai V2) */}
             <ScrollyHero />
 
-            {/* Mobile/Fallback Hero */}
-            <div className="lg:hidden">
-                <AboutHero />
-            </div>
+            {/* Mobile Touch-Optimized Interactive Hero */}
+            <MobileDiamondHero />
 
             <FirmIntro />
             <PhilosophySection />
@@ -27,5 +30,5 @@ export default function AboutPage() {
             <MajorClients />
             <CTASection />
         </main>
-    )
+    );
 }

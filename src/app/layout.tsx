@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Inter, Manrope } from "next/font/google"; // Added Manrope
-import { Toaster } from "@/components/ui/sonner";
-import { Navbar, Footer } from "@/components/layout";
-import { WhatsAppFloat } from "@/components/ui/whatsapp-float";
+import { Playfair_Display, Inter } from "next/font/google";
+import { PublicLayoutWrapper } from "@/components/layout/PublicLayoutWrapper";
 import "./globals.css";
-import { SITE_CONFIG } from "@/lib/constants";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -15,12 +12,6 @@ const playfair = Playfair_Display({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
-  display: "swap",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-display", // Using this for the Stitch design
   display: "swap",
 });
 
@@ -63,16 +54,9 @@ export const metadata: Metadata = {
     images: ["/og-image.jpg"],
   },
   icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
-  manifest: "/site.webmanifest",
   robots: {
     index: true,
     follow: true,
@@ -86,18 +70,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-      </head>
       <body
-        className={`${playfair.variable} ${inter.variable} ${manrope.variable} font-sans antialiased min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950`}
+        className={`${playfair.variable} ${inter.variable} font-sans antialiased min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950`}
       >
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <WhatsAppFloat />
-        <Toaster />
+        <PublicLayoutWrapper>
+          {children}
+        </PublicLayoutWrapper>
       </body>
     </html>
   );

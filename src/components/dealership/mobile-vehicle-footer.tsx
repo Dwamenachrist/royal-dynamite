@@ -1,18 +1,21 @@
 import React from "react"
 import { Phone, MapPin } from "lucide-react"
 import { SITE_CONFIG } from "@/lib/constants"
+import Image from "next/image"
+
+import { Vehicle } from "@/types"
 
 interface MobileVehicleFooterProps {
-    vehicle: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    vehicle: Vehicle
 }
 
-export function MobileVehicleFooter({ vehicle }: MobileVehicleFooterProps) {
+export function MobileVehicleFooter({ }: MobileVehicleFooterProps) {
     return (
         <div className="lg:hidden mt-12 space-y-6">
             {/* Consultant Profile */}
             <div className="flex items-center gap-4 pt-6 border-t border-white/5">
                 <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white/20">
-                    <img src="https://i.pravatar.cc/150?u=kwame" alt="Consultant" className="object-cover w-full h-full" />
+                    <Image src="https://i.pravatar.cc/150?u=kwame" alt="Consultant" fill sizes="48px" className="object-cover" />
                 </div>
                 <div>
                     <p className="text-xs text-gray-400 uppercase tracking-wide">Sales Consultant</p>

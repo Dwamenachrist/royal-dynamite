@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MessageCircle, ArrowRight } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { Vehicle } from "@/types";
 import { formatCurrency, generateWhatsAppLink } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
@@ -25,55 +25,76 @@ export function VehicleCard({ vehicle, showRentalPrice = false }: VehicleCardPro
         : `Hello, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model} listed for ${formatCurrency(vehicle.price)}.`;
 
     return (
-        <Card className="premium-card group h-full flex flex-col border-none shadow-none bg-transparent p-0 overflow-hidden">
-            {/* Image Zone - Cinematic 16:9 */}
-            <div className="relative aspect-video bg-muted overflow-hidden border-b border-border/40">
+        <Card className="group overflow-hidden border-border/40 hover:border-rd-gold/25 bg-card transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(15,34,61,0.1),0_4px_12px_rgba(212,175,55,0.06)]">
+            {/* Image Container */}
+            <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                 <Image
                     src={vehicle.images[0]}
                     alt={`${vehicle.make} ${vehicle.model}`}
                     fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
 
-                {/* Status Badge - Minimalist */}
+                {/* Status Badge */}
                 <div className="absolute top-3 left-3">
-                    <Badge variant="secondary" className="bg-black/60 text-white backdrop-blur-md border-0 text-[10px] uppercase tracking-wider px-2 py-0.5">
-                        {isRental ? "Rent" : "Sale"}
+                    <Badge variant={isRental ? "secondary" : "default"} className={`${isRental ? "bg-white/90 text-black backdrop-blur-sm" : "bg-rd-navy text-white"} shadow-sm`}>
+                        {isRental ? "For Rent" : "For Sale"}
                     </Badge>
                 </div>
+
+                {/* Category Badge */}
+                <div className="absolute top-3 right-3">
+                    <Badge variant="outline" className="bg-black/40 text-white backdrop-blur-md border-none uppercase text-[10px] tracking-wider">
+                        {vehicle.category}
+                    </Badge>
+                </div>
+
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
             </div>
 
-            {/* Content - Sleek & Compact */}
-            <div className="p-4 flex flex-col flex-1 gap-3">
-                {/* Header & Price Group */}
-                <div>
-                    {/* Dominant Gold Price */}
-                    <div className="text-xl md:text-2xl font-serif font-bold text-rd-gold mb-1 leading-none">
-                        {displayPrice}
+            {/* Content */}
+            <CardHeader className="pb-2 pt-4 px-5">
+                <div className="flex justify-between items-start gap-2">
+                    <div>
+                        <h3 className="font-bold text-lg leading-tight group-hover:text-rd-navy dark:group-hover:text-rd-gold transition-colors">
+                            {vehicle.make} {vehicle.model}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            {vehicle.year} • {vehicle.transmission}
+                        </p>
                     </div>
-                    {/* Concise Title */}
-                    <h3 className="font-medium text-base text-foreground/90 leading-tight group-hover:text-rd-navy dark:group-hover:text-white transition-colors">
-                        <span className="text-muted-foreground font-normal">{vehicle.year}</span> {vehicle.make} {vehicle.model}
-                    </h3>
                 </div>
+            </CardHeader>
 
-                {/* CTA Button - Full Width, Premium */}
-                <div className="mt-auto pt-2">
-                    <Button
-                        className="w-full bg-rd-navy text-white hover:bg-rd-gold hover:text-rd-navy transition-all duration-300 font-medium text-xs uppercase tracking-wider h-9"
-                        asChild
-                    >
-                        <a
-                            href={generateWhatsAppLink(whatsappMessage)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {isRental ? "Book Now" : "Enquire"}
-                        </a>
-                    </Button>
+            <CardContent className="px-5 pb-4">
+                <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-bold font-serif text-rd-navy dark:text-rd-gold">{displayPrice}</span>
                 </div>
-            </div>
+                <div className="flex gap-2 mt-3 text-xs text-muted-foreground">
+                    <span className="bg-rd-navy/5 dark:bg-white/5 px-2.5 py-1 rounded-full font-medium">{(vehicle.mileage || 0).toLocaleString()} km</span>
+                    <span className="bg-rd-navy/5 dark:bg-white/5 px-2.5 py-1 rounded-full font-medium">{vehicle.fuelType}</span>
+                </div>
+            </CardContent>
+
+            <CardFooter className="px-5 pb-5 pt-0 flex gap-3">
+                <Button variant="outline" className="flex-1 border-rd-navy/20 hover:border-rd-navy/40 hover:bg-rd-navy/5 text-rd-navy dark:text-rd-gold dark:border-rd-gold/20 dark:hover:bg-rd-gold/10 rounded-full" asChild>
+                    <Link href={isRental ? `/rentals/${vehicle.id}` : `/dealership/${vehicle.id}`}>
+                        Details
+                    </Link>
+                </Button>
+                <Button className="flex-1 bg-rd-gold hover:bg-rd-gold/90 text-rd-navy font-bold" asChild>
+                    <a
+                        href={generateWhatsAppLink(whatsappMessage)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        WhatsApp
+                    </a>
+                </Button>
+            </CardFooter>
         </Card>
     );
 }
